@@ -20,5 +20,12 @@
   "bugs": {
     "url": "https://github.com/Ivuup/editor/issues"
   },
-  "homepage": "https://github.com/Ivuup/editor#readme"
+  "homepage": "https://github.com/Ivuup/editor#readme",
+  "dependencies": {
+    "tributejs": "^3.7.1",
+    "vue": "^2.6.10",
+    "vue-material-design-icons": "^2.4.0",
+    "vue-tribute": "^1.0.2",
+    "vuetify": "^1.5.11"
+  }
 }
