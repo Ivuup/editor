@@ -1,6 +1,6 @@
 {
   "name": "@ivuup/editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Editor's Ivuup",
   "main": "index.js",
   "scripts": {
