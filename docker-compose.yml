@@ -1,0 +1,19 @@
+version: '3'
+services:
+  ivuup-editor:
+    build: ./docker
+    entrypoint: /start.sh
+    volumes:
+      - '.:/editor'
+    networks:
+      ivuup-editor:
+        ipv4_address: 172.16.10.2
+networks:
+  ivuup-editor:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: 'false'
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.10.0/24
