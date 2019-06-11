@@ -86,7 +86,7 @@ export default {
     },
     data(){
         return {
-            innerHTML: this.value,
+            body: this.value,
             enableTypography: false,
             editing: false,
             color: null,
@@ -101,6 +101,15 @@ export default {
         },
         mobile(){
             return this.$vuetify.breakpoint.smAndDown
+        },
+        innerHTML: {
+            get() {
+                return this.value || this.body
+            },
+            set(v) {
+                this.body = v
+                this.$refs.content.innerHTML = v
+            }
         }
     },
     watch:{
