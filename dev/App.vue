@@ -12,4 +12,7 @@ h1 {
   text-align: center;
   color: #2c3e50;
 }
+.container {
+  margin: 5vh 15vw;
+}
 </style>

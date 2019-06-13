@@ -1,0 +1,18 @@
+.i-editor {
+  display: flex;
+  height: 100%;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.i-content {
+  flex-grow: 1;
+}
+
+.i-button-toolbar {
+  width: 50px;
+}
+
+.i-toolbar {
+  width: 100%;
+}

@@ -9,7 +9,7 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
-        '@': __dirname
+        '@': __dirname + '/src'
       }
     },
     
