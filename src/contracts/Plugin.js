@@ -1,4 +1,4 @@
-export class Plugin {
+export default class Plugin {
 	exec(command, editor) {
 		return this[command](editor)
 	}

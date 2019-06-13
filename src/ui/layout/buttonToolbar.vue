@@ -1,24 +1,39 @@
 <template>
-  <v-menu attach right offset-x>
-    <v-btn :class="{ add: true, active: show}" slot="activator" small icon
+  <v-menu attach right offset-x :class="{ add: true, active: show}">
+    <v-btn slot="activator" small icon
       :style="`margin-top: ${offsetTop}px;`"
     >
       <v-icon>add_circle_outline</v-icon>
     </v-btn>
-    <v-card>
-      <v-btn icon @click="$emit('command', 'bold.toggle')">B</v-btn>
+    <v-card class="pa-1">
+      <btn
+        v-for="button in buttons" 
+        :key="button.name"
+        :item="button"
+        @command="$emit('command', $event)"
+      ></btn>
     </v-card>
   </v-menu>
 </template>
 
 <script>
+import Btn from '@/ui/button'
+
 export default {
+  components: {
+    Btn
+  },
+  computed: {
+    buttons() {
+      return this.core.config.buttonToolbar.slice().map(i => this.core.enabledButtons[i])
+    }
+  },
   data() {
     return {
       show: null,
       target: null,
       offsetTop: 0,
-      errorHeight: 45
+      errorHeight: 5
     }
   },
   props: {
@@ -36,9 +51,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.add:not(.active) {
-  opacity: 0;
-}
-</style>

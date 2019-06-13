@@ -1,12 +1,9 @@
-import {Plugin} from '@/contracts/Plugin'
+import Plugin from '@/contracts/Plugin'
+import Button from '@/contracts/Button'
 
-export class Bold extends Plugin {
+export default class Bold extends Plugin {
   buttons = [
-    {
-      icon: 'format_bold',
-      name: 'bold',
-      command: 'bold.toggle'
-    }
+    new Button('bold', 'bold.toggle', 'format_bold')
   ]
 
   toggle() {

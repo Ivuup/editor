@@ -1,18 +1,28 @@
 .i-editor {
   display: flex;
   height: 100%;
-  flex-wrap: wrap;
   position: relative;
 }
 
 .i-content {
-  flex-grow: 1;
+  height: 100%;
+  min-height: 16px;
 }
 
 .i-button-toolbar {
   width: 50px;
 }
 
-.i-toolbar {
+.i-editor .i-toolbar {
   width: 100%;
+}
+
+.i-editor .v-menu.add:not(.active) {
+  opacity: 0;
+}
+
+.i-editor .wrap {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
