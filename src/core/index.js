@@ -68,6 +68,9 @@ export default class {
    */
   addPlugin(...plugins) {
     plugins.forEach(plugin => {
+      // iniciando instância
+      plugin = new plugin
+      
       if (!(plugin instanceof Plugin))
         throw new Error('This Object is not an instanceof Plugin')
       // TODO: preparar botoes, eventos etc

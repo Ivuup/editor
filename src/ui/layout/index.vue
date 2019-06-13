@@ -24,7 +24,8 @@
 <script>
 import Core from '@/core'
 import Toolbar from './toolbar.vue'
-import Bold from '@/plugins/Font/Style/Bold'
+import Format from '@/plugins/Format'
+import Link from '@/plugins/Link'
 import ButtonToolbar from './buttonToolbar.vue'
 
 export default {
@@ -42,14 +43,20 @@ export default {
       context.core = new Core({
         element: context.$refs.editor,
         plugins: [
-          new Bold
+          Link,
+          ...Format
         ],
         config: {
           toolbar: [
-            'bold'
+            'alignment',
+            'bold',
+            'italic',
+            'underline',
+            'removeFormat',
+            'horizontalRule'
           ],
           buttonToolbar: [
-            'bold'
+            'link'
           ]
         },
         innerHTML: null

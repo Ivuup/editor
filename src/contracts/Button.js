@@ -4,9 +4,9 @@ export default class Button {
   icon
   title
   
-  constructor(name, command, icon, title) {
+  constructor(name, commandOrButtons, icon, title) {
     this.name = name
-    this.command = command
+    this.command = commandOrButtons
     this.icon = icon
     this.title = title
   }
