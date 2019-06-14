@@ -26,6 +26,7 @@ import Core from '@/core'
 import Toolbar from './toolbar.vue'
 import Format from '@/plugins/Format'
 import Link from '@/plugins/Link'
+import Preview from '@/plugins/Link/Preview'
 import ButtonToolbar from './buttonToolbar.vue'
 
 export default {
@@ -41,9 +42,10 @@ export default {
   created() {
     this.$nextTick().then((context) => {
       context.core = new Core({
-        element: context.$refs.editor,
+        editor: context.$refs.editor,
         plugins: [
           Link,
+          Preview,
           ...Format
         ],
         config: {

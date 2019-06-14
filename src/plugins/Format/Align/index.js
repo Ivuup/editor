@@ -32,7 +32,6 @@ export default class Align extends Plugin {
     document.execCommand('justifyCenter', false, '')
   }
   justify() {
-    console.log('TODO')
-    document.execCommand('justifyJustify', false, '')
+    document.execCommand('justifyFull', false, '')
   }
 }

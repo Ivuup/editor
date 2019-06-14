@@ -1,6 +1,9 @@
 <template>
   <v-menu attach right offset-x :class="{ add: true, active: show}">
-    <v-btn slot="activator" small icon
+    <v-btn
+      slot="activator"
+      small
+      icon
       :style="`margin-top: ${offsetTop}px;`"
     >
       <v-icon>add_circle_outline</v-icon>

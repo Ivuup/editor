@@ -7,6 +7,7 @@
 .i-content {
   height: 100%;
   min-height: 16px;
+  word-wrap: break-word;
 }
 
 .i-button-toolbar {
@@ -25,4 +26,32 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+
+.i-editor .link-preview {
+  text-decoration: none;
+  color: inherit;
+}
+.i-editor .link-preview .wrap {
+  flex-direction: row;
+  margin: 15px 5px;
+  padding: 15px;
+  border: #e3e3e3 solid 1px;
+  border-radius: 5px;
+  border-left: 5px solid #e3e3e3;
+  opacity: .8;
+  transition: opacity 200ms;
+}
+.i-editor .link-preview .wrap:hover {
+  opacity: 1;
+}
+.i-editor .link-preview .wrap div {
+  margin: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+}
+.i-editor .link-preview img {
+  width: 150px;
+  height: auto;
 }

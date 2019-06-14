@@ -6,8 +6,9 @@ export default class Link extends Plugin {
     new Button('link', 'link.create', 'link')
   ]
 
-  create() {
-    let url = prompt("Digite a URL");
+  create(url) {
+    if (!url)
+      url = prompt("Digite a URL")
     
     if (!url)
       return 
