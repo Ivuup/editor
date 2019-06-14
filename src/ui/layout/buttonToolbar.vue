@@ -1,8 +1,9 @@
 <template>
-  <v-menu attach right offset-x :class="{ add: true, active: show}">
+  <v-menu attach bottom offset-y :class="{ add: true, active: show}">
     <v-btn
       slot="activator"
       small
+      class="mx-0 mb-0"
       icon
       :style="`margin-top: ${offsetTop}px;`"
     >
@@ -50,6 +51,8 @@ export default {
       this.target = v.focusNode
       if (v.focusNode.nodeType == 1)
         this.offsetTop = v.focusNode.offsetTop - this.errorHeight
+      if (this.offsetTop < 40)
+        this.offsetTop = 40
     }
   }
 }

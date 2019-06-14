@@ -2,13 +2,28 @@ import Plugin from '@/contracts/Plugin'
 
 export default class Preview extends Plugin {
   regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/
-  url = ""
   apiUrl = "https://linkpreview-api.herokuapp.com/"
   response
   lastText = ""
   lastNode
 
-  input(event) {
+  /**
+   * Verifica se o que foi colado é uma url
+   * 
+   * @param {ClipboardEvent} event 
+   */
+  onPaste(event) {
+    let text = event.clipboardData.getData('TEXT')
+    if (this.regex.test(text))
+      this.getLinkPreview(this.regex.exec(text)[0], this.core.selection.focusNode)
+  }
+
+  /**
+   * Verifica o conteúdo sendo adicionando e se é uma url
+   * 
+   * @param {InputEvent} event 
+   */
+  onInput(event) {
     if (event.inputType != "insertText") return
 
     if (event.data && event.data != " ") {
@@ -22,12 +37,17 @@ export default class Preview extends Plugin {
       this.lastText = null
       return
     }
-    this.url = this.regex.exec(this.lastText)[0]
-    this.getLinkPreview()
+    this.getLinkPreview(this.regex.exec(this.lastText)[0])
   }
 
-  getLinkPreview() {
-    this.httpRequest((response) => {
+  /**
+   * Gera o elemento de preview
+   * 
+   * @param {String} url 
+   * @param {Element} target 
+   */
+  getLinkPreview(url, target) {
+    this._httpRequest(url, (response) => {
       response = JSON.parse(response)
       let preview = document.createElement('a')
       preview.className = 'link-preview'
@@ -43,15 +63,24 @@ export default class Preview extends Plugin {
           </div>
         </div>
       `
-      this.core.editor.insertBefore(preview, this.lastNode)
+      if (target)
+        target.innerHTML = preview.outerHTML
+      else
+        this.core.editor.insertBefore(preview, this.lastNode)
     })
-    this.url = null
     this.lastText = null
   }
   
-  httpRequest(success, error) {
+  /**
+   * Faz a requisição na api
+   * 
+   * @param {String} url 
+   * @param {Function} success 
+   * @param {Function} error 
+   */
+  _httpRequest(url, success, error) {
     const http = new XMLHttpRequest()
-    const params = 'url=' + this.url
+    const params = 'url=' + url
     http.open('POST', this.apiUrl, true)
     http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
     http.onreadystatechange = function() {

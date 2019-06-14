@@ -25,13 +25,14 @@ export default class {
     this.editor.innerHTML = innerHTML || null
     this.editor.designMode = true
     this.editor.contentEditable = true
-    this.config = config
+    this._configurations(config)
     this.addPlugin(...plugins)
 
     this.editor.addEventListener('click', this._handleClickAndKeyup.bind(this))
     this.editor.addEventListener('keydown', this._handleKeydown.bind(this))
     this.editor.addEventListener('keyup', this._handleClickAndKeyup.bind(this))
     this.editor.addEventListener('input', this._handleInput.bind(this))
+    this.editor.addEventListener('paste', this._handlePaste.bind(this))
   }
 
   /**
@@ -54,13 +55,22 @@ export default class {
   }
 
   _handleKeydown(event) {
-    this.selection = null
-    this.selection = window.getSelection()
-
     Object.keys(this.plugins).forEach(plugin => 
-      this.plugins[plugin].keydown ? this.plugins[plugin].keydown(event) : null
+      this.plugins[plugin].onKeydown ? this.plugins[plugin].onKeydown(event) : null
     )
   }
+  
+  _handlePaste(event) {
+    Object.keys(this.plugins).forEach(plugin => 
+      this.plugins[plugin].onPaste ? this.plugins[plugin].onPaste(event) : null
+    )
+  }
+  
+  _handleInput(event) {
+    Object.keys(this.plugins).forEach(plugin => 
+      this.plugins[plugin].onInput ? this.plugins[plugin].onInput(event) : null
+      )
+    }
 
   _handleClickAndKeyup(event) {
     this.selection = null
@@ -102,9 +112,14 @@ export default class {
     })
   }
 
-  _handleInput(event) {
-    Object.keys(this.plugins).forEach(plugin => 
-      this.plugins[plugin].input ? this.plugins[plugin].input(event) : null
-    )
+  _configurations(config) {
+    this.config = config
+
+    // atribui foco ao editor ao iniciar
+    if (this.config.autofocus) {
+      this.editor.focus()
+    }
+    // mostra texto caso o editor esteja vazio
+    this.editor.setAttribute('placeholder', config.placeholder)
   }
 }

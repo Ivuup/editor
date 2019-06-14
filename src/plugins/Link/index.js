@@ -7,7 +7,7 @@ export default class Link extends Plugin {
   ]
 
   create(url) {
-    if (!url)
+    if (typeof url != 'string')
       url = prompt("Digite a URL")
     
     if (!url)
@@ -16,6 +16,10 @@ export default class Link extends Plugin {
     if (!/^http/.test(url))
       url = 'https://' + url
     
+    let previewPlugin = this.core.plugins['Preview']
+    if (previewPlugin)
+      previewPlugin.getLinkPreview(url, this.core.selection.focusNode)
+    else
       document.execCommand('createLink', false, url)
   }
 }

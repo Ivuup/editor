@@ -12,7 +12,7 @@
         ></recursive-button>
     </v-card>
   </v-menu>
-  <v-btn v-else icon small @click="$emit('command', item.command)" class="mx-1">
+  <v-btn v-else icon small @click="$emit('command', item.command)" class="mx-1" :color="item.active ? 'grey lighten-2' : null">
     <v-icon>{{ item.icon }}</v-icon>
   </v-btn>
 </template>

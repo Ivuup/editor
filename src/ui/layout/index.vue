@@ -59,7 +59,8 @@ export default {
           ],
           buttonToolbar: [
             'link'
-          ]
+          ],
+          placeholder: 'Digite aqui...'
         },
         innerHTML: null
       })

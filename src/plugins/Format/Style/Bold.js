@@ -6,6 +6,11 @@ export default class Bold extends Plugin {
     new Button('bold', 'bold.toggle', 'format_bold')
   ]
 
+  onKeydown() {
+    //TODO: Melhorar verificacao
+    this.buttons[0].active = this.core.selection.focusNode.parentNode.nodeName == 'B'
+  }
+
   toggle() {
     document.execCommand('bold', false, '')
   }
