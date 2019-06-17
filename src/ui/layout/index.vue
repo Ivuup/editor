@@ -26,6 +26,8 @@ import Core from '@/core'
 import Toolbar from './toolbar.vue'
 import Format from '@/plugins/Format'
 import Link from '@/plugins/Link'
+import Hotkey from '@/plugins/Hotkey'
+import ImageUpload from '@/plugins/Image/Upload'
 import Preview from '@/plugins/Link/Preview'
 import ButtonToolbar from './buttonToolbar.vue'
 
@@ -45,8 +47,10 @@ export default {
         editor: context.$refs.editor,
         plugins: [
           Link,
+          Hotkey,
           Preview,
-          ...Format
+          ...Format,
+          ImageUpload
         ],
         config: {
           toolbar: [
@@ -60,7 +64,19 @@ export default {
           buttonToolbar: [
             'link'
           ],
-          placeholder: 'Digite aqui...'
+          placeholder: 'Digite aqui...',
+          hotkey: [
+            {
+              marker: '@',
+              items: [
+                {
+                  name: 'Amy',
+                  original: '@user(2)',
+                  render: ''
+                }
+              ]
+            }
+          ]
         },
         innerHTML: null
       })

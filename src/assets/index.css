@@ -7,7 +7,7 @@
 .i-content {
   height: 100%;
   min-height: 16px;
-  word-wrap: break-word;
+  word-break: break-word;
   padding: 5px;
   border-radius: 5px;
   transition: background 400ms;

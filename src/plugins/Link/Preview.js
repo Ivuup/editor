@@ -14,8 +14,10 @@ export default class Preview extends Plugin {
    */
   onPaste(event) {
     let text = event.clipboardData.getData('TEXT')
-    if (this.regex.test(text))
+    if (this.regex.test(text)) {
+      event.preventDefault()
       this.getLinkPreview(this.regex.exec(text)[0], this.core.selection.focusNode)
+    }
   }
 
   /**
@@ -63,10 +65,11 @@ export default class Preview extends Plugin {
           </div>
         </div>
       `
-      if (target)
-        target.innerHTML = preview.outerHTML
-      else
-        this.core.editor.insertBefore(preview, this.lastNode)
+      document.execCommand('insertHTML', false, preview.outerHTML)
+      document.execCommand('insertParagraph')
+      document.execCommand('createLink', false, url)
+    }, () => {
+      document.execCommand('createLink', false, url)
     })
     this.lastText = null
   }
