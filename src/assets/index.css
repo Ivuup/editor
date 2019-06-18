@@ -71,3 +71,14 @@
   width: 150px;
   height: auto;
 }
+
+/* Paragraph */
+.i-editor .i-content p:last-child {
+  margin: 0;
+}
+.i-editor .i-content p {
+  min-height: 16px;
+}
+.i-float-action {
+  transition: position 500ms;
+}

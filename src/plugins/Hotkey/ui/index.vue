@@ -1,23 +1,17 @@
 <template>
-  <v-menu :value="value">
-    <v-list v-if="items.length > 0">
-      <v-list-tile>
-        <v-list-tile-content>{{ item.name }}</v-list-tile-content>
-      </v-list-tile>
-    </v-list>
-  </v-menu>
+  <v-list v-if="core.config.hotkey[0].items.length > 0">
+    <v-list-tile v-for="item in core.config.hotkey[0].items" :key="item.raw">
+      <v-list-tile-content>{{ item.name }}</v-list-tile-content>
+    </v-list-tile>
+  </v-list>
 </template>
 
 <script>
 export default {
   props: {
-    value: {
-      type: Boolean,
-      default: false
-    },
-    items: {
-      type: Array,
-      default: []
+    core: {
+      type: Object,
+      required: true
     }
   }
 }

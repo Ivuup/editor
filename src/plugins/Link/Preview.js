@@ -65,9 +65,8 @@ export default class Preview extends Plugin {
           </div>
         </div>
       `
-      document.execCommand('insertHTML', false, preview.outerHTML)
-      document.execCommand('insertParagraph')
       document.execCommand('createLink', false, url)
+      document.execCommand('insertHTML', false, `<div>${preview.outerHTML}</div>`)
     }, () => {
       document.execCommand('createLink', false, url)
     })

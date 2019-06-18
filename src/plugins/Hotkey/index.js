@@ -1,5 +1,7 @@
 import Plugin from '@/contracts/Plugin'
+import View from './ui'
 
+// TODO: Implementar
 export default class Hotkey extends Plugin {
   // regexMarkers
   regex
@@ -14,7 +16,11 @@ export default class Hotkey extends Plugin {
     // varrer o conteúdo e renderizar os componentes
   }
 
-  onInput(event) {
+  onKeydown(event) {
+  }
+
+  onKeyup(event) {
+    this.core._floatAction.value = false
     // verifica se existe um marcador
     if (!this.regex.test(this.core.selection.focusNode.data))
       return
@@ -24,21 +30,43 @@ export default class Hotkey extends Plugin {
     let words = this.core.selection.focusNode.data.split(' ')
     let count = 0
     let wordsIndex = words.map(w => {
-      count+= w.length
-      return count++
+      return {
+        start: count,
+        end: (() => {
+          let tmp = count + w.trim().length - 1
+          count+= w.length + 1
+          return tmp
+        })()
+      }
     })
-    let current = words.find((w, i) => wordsIndex[i] >= this.core.selection.focusOffset)
-    
+    let current = words.find((w, i) => wordsIndex[i].start <= this.core.selection.focusOffset -1 
+      && wordsIndex[i].end >= this.core.selection.focusOffset -1)
+
     if (!this.regexWord.test(current))
       return
 
     // pegar o marcador correto
     let marker = this._getMarker(current)
-    // renderizar lista e pesquisar
-    // TODO: implementar
+    // pesquisar lista
+    // renderizar lista
+    this.core._floatAction.component = View
+    this.core._floatAction.value = true
   }
 
   _getMarker(word) {
     return this.core.config.hotkey.find(m => m.marker == word.slice(0, 1))
+  }
+
+  _checkActions(event) {
+    // verificando se menu esta ativo
+    if (!this.core._floatAction.value) return
+
+    console.log(event.key)
+    switch(event.key) {
+      case 'Escape': 
+        event.preventDefault()
+        this.core._floatAction.value = false
+      break
+    }
   }
 }

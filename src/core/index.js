@@ -13,6 +13,7 @@ export default class {
   selection
   enabledButtons = {}
   config
+  _floatAction = {}
 
   /**
    * Constrói a base do editor
@@ -22,7 +23,7 @@ export default class {
   constructor({ editor, layout, innerHTML, plugins, config }) {
     this.editor = editor
     this.layout = layout || Layout
-    this.editor.innerHTML = innerHTML || '<p contenteditable="true"></p>'
+    this.editor.innerHTML = innerHTML || '<p></p>'
     this.editor.designMode = true
     this.editor.contentEditable = true
     this._configurations(config)
@@ -55,6 +56,8 @@ export default class {
   }
 
   _handleKeydown(event) {
+    this.selection = null
+    this.selection = window.getSelection()
     Object.keys(this.plugins).forEach(plugin => 
       this.plugins[plugin].onKeydown ? this.plugins[plugin].onKeydown(event) : null
     )
@@ -69,12 +72,18 @@ export default class {
   _handleInput(event) {
     Object.keys(this.plugins).forEach(plugin => 
       this.plugins[plugin].onInput ? this.plugins[plugin].onInput(event) : null
-      )
-    }
-
+    )
+  }
+  
   _handleClickAndKeyup(event) {
+    if (!this.editor.innerHTML)
+      this.editor.innerHTML = '<p></p>'
     this.selection = null
     this.selection = window.getSelection()
+    
+    Object.keys(this.plugins).forEach(plugin => 
+      this.plugins[plugin].onKeyup ? this.plugins[plugin].onKeyup(event) : null
+    )
   }
 
   /**
@@ -114,7 +123,7 @@ export default class {
 
   _configurations(config) {
     this.config = config
-
+    this._floatAction = { value: false }
     // atribui foco ao editor ao iniciar
     if (this.config.autofocus) {
       this.editor.focus()

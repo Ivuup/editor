@@ -17,6 +17,11 @@
         class="i-content"
         ref="editor"
       ></div>
+      <float-action
+        class="i-float-action"
+        v-if="core"
+        :core="core"
+      ></float-action>
     </div>
   </div>
 </template>
@@ -30,10 +35,12 @@ import Hotkey from '@/plugins/Hotkey'
 import ImageUpload from '@/plugins/Image/Upload'
 import Preview from '@/plugins/Link/Preview'
 import ButtonToolbar from './buttonToolbar.vue'
+import FloatAction from './floatAction.vue'
 
 export default {
   components: {
     ButtonToolbar,
+    FloatAction,
     Toolbar
   },
   data() {
@@ -71,7 +78,7 @@ export default {
               items: [
                 {
                   name: 'Amy',
-                  original: '@user(2)',
+                  raw: '@user(2)',
                   render: ''
                 }
               ]
