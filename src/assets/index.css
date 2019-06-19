@@ -2,6 +2,8 @@
   display: flex;
   height: 100%;
   position: relative;
+  max-width: 800px;
+  margin: auto;
 }
 
 .i-content {
@@ -10,15 +12,13 @@
   word-break: break-word;
   padding: 5px;
   border-radius: 5px;
-  transition: background 400ms;
 }
-.i-content:empty:before {
+.i-content p:only-child:empty:before {
   content: attr(placeholder);
   color: #555; 
 }
 .i-content:focus {
   outline: none;
-  background: rgba(0, 0, 0, .03);
 }
 
 .i-button-toolbar {
@@ -81,4 +81,9 @@
 }
 .i-float-action {
   transition: position 500ms;
+}
+
+.i-content img {
+  width: 100%;
+  height: auto;
 }

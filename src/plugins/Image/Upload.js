@@ -1,36 +1,71 @@
 import Plugin from '@/contracts/Plugin'
+import Button from '@/contracts/Button'
 
 export default class Upload extends Plugin {
   regex = /file:\/\/\/[\w|\W]*/
-  onPaste(event) {
-    let text = event.clipboardData.getData('TEXT')
-    if (this.regex.test(text)) {
-      event.preventDefault()
-      text = this.regex.exec(text)[0]
+  buttons = [
+    new Button('uploadImage', 'upload.new', 'add_a_photo')
+  ]
+  
+  constructor(core) {
+    super(core)
 
-      // TODO: Concluir
-      document.execCommand('insertImage', false, text)
+    this.core.editor.addEventListener('drop', this._onDrop.bind(this))
+  }
+
+  onPaste(event) {
+    let items = event.clipboardData.items ? (items => {
+      let tmp = []
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].kind === 'file')
+          tmp.push(items[i])
+      }
+      return tmp
+    })(event.clipboardData.items) : event.clipboardData.files
+
+    if (items.length <= 0)
+      return
+    
+    this._insertImages(items)
+  }
+    
+  _onDrop(event) {
+    event.preventDefault()
+
+    let items = event.dataTransfer.items ? (items => {
+      let tmp = []
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].kind === 'file')
+          tmp.push(items[i])
+      }
+      return tmp
+    })(event.dataTransfer.items) : event.dataTransfer.files
+
+    if (items.length <= 0)
+      return
+    
+    this._insertImages(items)
+  }
+
+  _insertImages(files) {
+    // lendo arquivos
+    for (let i = 0; i < files.length; i++) {
+      let reader = new FileReader()
+      reader.onloadend = function() {
+        document.execCommand('insertImage', false, reader.result)
+      }
+      reader.readAsDataURL(files[i].getAsFile ? files[i].getAsFile() : files[i])
     }
   }
 
-  /**
-   * Faz a requisição na api
-   * 
-   * @param {String} url 
-   * @param {Function} success 
-   * @param {Function} error 
-   */
-  _httpRequest(url, success, error) {
-    const http = new XMLHttpRequest()
-    http.open('GET', url, false)
-    http.onreadystatechange = function() {
-      if (http.readyState === 4 && http.status === 200) {
-           success(http.responseText)
-         }
-      if (http.readyState === 4 && http.status === 500) {
-           error()
-         }
-    }
-    http.send()
+  new() {
+    let input = document.createElement('input')
+    input.type = 'file'
+    f.accept = 'image/*'
+    input.multiple = true
+    input.addEventListener('change', ((event) => {
+      this._insertImages(event.path[0].files)
+    }).bind(this))
+    input.click()
   }
 }

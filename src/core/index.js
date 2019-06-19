@@ -77,7 +77,7 @@ export default class {
   
   _handleClickAndKeyup(event) {
     if (!this.editor.innerHTML)
-      this.editor.innerHTML = '<p></p>'
+      this.editor.innerHTML = `<p placeholder="${this.config.placeholder}"></p>`
     this.selection = null
     this.selection = window.getSelection()
     
@@ -129,6 +129,6 @@ export default class {
       this.editor.focus()
     }
     // mostra texto caso o editor esteja vazio
-    this.editor.setAttribute('placeholder', config.placeholder)
+    this.editor.children[0].setAttribute('placeholder', config.placeholder)
   }
 }

@@ -69,7 +69,8 @@ export default {
             'horizontalRule'
           ],
           buttonToolbar: [
-            'link'
+            'link',
+            'uploadImage'
           ],
           placeholder: 'Digite aqui...',
           hotkey: [
