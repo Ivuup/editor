@@ -15,7 +15,7 @@
       ></toolbar>
       <div
         class="i-content"
-        ref="editor"
+        ref="content"
       ></div>
       <float-action
         class="i-float-action"
@@ -27,13 +27,7 @@
 </template>
 
 <script>
-import Core from '@/core'
 import Toolbar from './toolbar.vue'
-import Format from '@/plugins/Format'
-import Link from '@/plugins/Link'
-import Hotkey from '@/plugins/Hotkey'
-import ImageUpload from '@/plugins/Image/Upload'
-import Preview from '@/plugins/Link/Preview'
 import ButtonToolbar from './buttonToolbar.vue'
 import FloatAction from './floatAction.vue'
 
@@ -43,56 +37,22 @@ export default {
     FloatAction,
     Toolbar
   },
-  data() {
-    return {
-      core: null
+  props: {
+    core: {
+      type: Object
     }
-  },
-  created() {
-    this.$nextTick().then((context) => {
-      context.core = new Core({
-        editor: context.$refs.editor,
-        plugins: [
-          Link,
-          Hotkey,
-          Preview,
-          ...Format,
-          ImageUpload
-        ],
-        config: {
-          toolbar: [
-            'alignment',
-            'bold',
-            'italic',
-            'underline',
-            'removeFormat',
-            'horizontalRule'
-          ],
-          buttonToolbar: [
-            'link',
-            'uploadImage'
-          ],
-          placeholder: 'Digite aqui...',
-          hotkey: [
-            {
-              marker: '@',
-              items: [
-                {
-                  name: 'Amy',
-                  raw: '@user(2)',
-                  render: ''
-                }
-              ]
-            }
-          ]
-        },
-        innerHTML: null
-      })
-    })
   },
   methods: {
     command(command) {
       this.core.exec(command)
+    }
+  },
+  watch: {
+    core(v) {
+      // ativar eventos
+      this.core.blurCallback = ((event) => this.$emit('blur', event)).bind(this)
+      this.core.editingCallback = ((boolean) => this.$emit('editing', boolean)).bind(this)
+      this.core.inputCallback = ((payload) => this.$emit('input', payload)).bind(this)
     }
   }
 }

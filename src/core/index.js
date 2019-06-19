@@ -14,6 +14,8 @@ export default class {
   enabledButtons = {}
   config
   _floatAction = {}
+  delayInput = 1000
+  _editing = null
 
   /**
    * Constrói a base do editor
@@ -34,6 +36,7 @@ export default class {
     this.editor.addEventListener('keyup', this._handleClickAndKeyup.bind(this))
     this.editor.addEventListener('input', this._handleInput.bind(this))
     this.editor.addEventListener('paste', this._handlePaste.bind(this))
+    this.editor.addEventListener('blur', this._handleBlur.bind(this))
   }
 
   /**
@@ -70,6 +73,18 @@ export default class {
   }
   
   _handleInput(event) {
+    if (this._editing == null)
+      this.editingCallback(true)
+
+    if(this._editing)
+      clearTimeout(this._editing)
+    
+    this._editing = setTimeout(() => {
+      this.inputCallback([this.editor.innerHTML])
+      this.editingCallback(false)
+      this._editing = null
+    }, this.delayInput)
+
     Object.keys(this.plugins).forEach(plugin => 
       this.plugins[plugin].onInput ? this.plugins[plugin].onInput(event) : null
     )
@@ -84,6 +99,10 @@ export default class {
     Object.keys(this.plugins).forEach(plugin => 
       this.plugins[plugin].onKeyup ? this.plugins[plugin].onKeyup(event) : null
     )
+  }
+
+  _handleBlur(event) {
+    this.blurCallback(event)
   }
 
   /**

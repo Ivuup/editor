@@ -15,4 +15,8 @@ h1 {
 .container {
   margin: 5vh 15vw;
 }
+.i-editor {
+  max-width: 800px;
+}
+
 </style>
