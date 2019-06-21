@@ -1,5 +1,5 @@
 <template>
-  <v-menu attach bottom offset-y :class="{ add: true, active: show}">
+  <v-menu attach bottom offset-y :class="{ add: true, active: show }">
     <v-btn
       slot="activator"
       small
@@ -11,7 +11,7 @@
     </v-btn>
     <v-card class="pa-1">
       <btn
-        v-for="button in buttons" 
+        v-for="button in buttons"
         :key="button.name"
         :item="button"
         @command="$emit('command', $event)"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Btn from '@/ui/button'
+import Btn from "../button";
 
 export default {
   components: {
@@ -29,16 +29,17 @@ export default {
   },
   computed: {
     buttons() {
-      return this.core.config.buttonToolbar.slice().map(i => this.core.enabledButtons[i])
+      return this.core.config.buttonToolbar
+        .slice()
+        .map(i => this.core.enabledButtons[i]);
     }
   },
   data() {
     return {
       show: null,
       target: null,
-      offsetTop: 0,
-      errorHeight: 5
-    }
+      offsetTop: 0
+    };
   },
   props: {
     core: {
@@ -46,14 +47,16 @@ export default {
     }
   },
   watch: {
-    'core.selection'(v) {
-      this.show =  v.focusNode.innerText == "" || v.focusNode.textContent == ""
-      this.target = v.focusNode
+    "core.selection"(v) {
+      this.show = v.focusNode.innerText == "" || v.focusNode.textContent == "";
+      this.target = v.focusNode;
       if (v.focusNode.nodeType == 1)
-        this.offsetTop = v.focusNode.offsetTop - this.errorHeight
-      if (this.offsetTop < 40)
-        this.offsetTop = 40
+        this.offsetTop =
+          v.focusNode.offsetTop -
+          v.focusNode.clientHeight / 3 -
+          v.focusNode.parentNode.scrollTop;
+      if (this.offsetTop < 40) this.offsetTop = 40;
     }
   }
-}
+};
 </script>

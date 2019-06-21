@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar">
     <btn
-      v-for="button in buttons" 
+      v-for="button in buttons"
       :key="button.name"
       :item="button"
       @command="$emit('command', $event)"
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Btn from '@/ui/button'
+import Btn from "../button";
 
 export default {
   components: {
@@ -18,9 +18,11 @@ export default {
   },
   computed: {
     buttons() {
-      if (!this.core.config.toolbar) return []
-      
-      return this.core.config.toolbar.slice().map(i => this.core.enabledButtons[i])
+      if (!this.core.config.toolbar) return [];
+
+      return this.core.config.toolbar
+        .slice()
+        .map(i => this.core.enabledButtons[i]);
     }
   },
   props: {
@@ -28,5 +30,5 @@ export default {
       required: true
     }
   }
-}
+};
 </script>

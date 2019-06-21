@@ -1,6 +1,15 @@
 <template>
-  <v-menu absolute :position-x="x" :position-y="y" :value="core._floatAction.value">
-    <div v-if="core._floatAction.component" :is="core._floatAction.component" :core="core"></div>
+  <v-menu
+    absolute
+    :position-x="x"
+    :position-y="y"
+    :value="core._floatAction.value"
+  >
+    <div
+      v-if="core._floatAction.component"
+      :is="core._floatAction.component"
+      :core="core"
+    ></div>
   </v-menu>
 </template>
 
@@ -8,9 +17,9 @@
 export default {
   data() {
     return {
-      y: 0, 
+      y: 0,
       x: 0
-    }
+    };
   },
   props: {
     core: {
@@ -19,11 +28,12 @@ export default {
     }
   },
   watch: {
-    'core.selection'(v) {
-      let node = v.focusNode.nodeName != 'P' ? v.focusNode.parentNode : v.focusNode
-      this.y = node.offsetTop + 16
-      this.x = node.offsetLeft
+    "core.selection"(v) {
+      let node =
+        v.focusNode.nodeName != "P" ? v.focusNode.parentNode : v.focusNode;
+      this.y = node.offsetTop + node.clientHeight - node.parentNode.scrollTop;
+      this.x = node.offsetLeft;
     }
   }
-}
+};
 </script>
