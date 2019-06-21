@@ -9,13 +9,13 @@
 </template>
 
 <script>
-import Core from '@/core'
-import Layout from '@/ui/layout'
-import Link from '@/plugins/Link'
-import Format from '@/plugins/Format'
-import Hotkey from '@/plugins/Hotkey'
-import Preview from '@/plugins/Link/Preview'
-import ImageUpload from '@/plugins/Image/Upload'
+import Core from "./core";
+import Layout from "./ui/layout";
+import Link from "./plugins/Link";
+import Format from "./plugins/Format";
+import Hotkey from "./plugins/Hotkey";
+import Preview from "./plugins/Link/Preview";
+import ImageUpload from "./plugins/Image/Upload";
 
 export default {
   components: {
@@ -25,7 +25,7 @@ export default {
     return {
       defaultCore: null,
       test: null
-    }
+    };
   },
   props: {
     core: {
@@ -34,50 +34,41 @@ export default {
   },
   created() {
     if (!this.core)
-      this.$nextTick().then((context) => {
+      this.$nextTick().then(context => {
         context.defaultCore = new Core({
           editor: context.$refs.editor.$refs.content,
-          plugins: [
-            Link,
-            Hotkey,
-            Preview,
-            ...Format,
-            ImageUpload
-          ],
+          plugins: [Link, Hotkey, Preview, ...Format, ImageUpload],
           config: {
             toolbar: [
-              'alignment',
-              'bold',
-              'italic',
-              'underline',
-              'removeFormat',
-              'horizontalRule'
+              "alignment",
+              "bold",
+              "italic",
+              "underline",
+              "removeFormat",
+              "horizontalRule"
             ],
-            buttonToolbar: [
-              'link',
-              'uploadImage'
-            ],
-            placeholder: 'Digite aqui...',
+            buttonToolbar: ["link", "uploadImage"],
+            placeholder: "Digite aqui...",
             hotkey: [
               {
-                marker: '@',
+                marker: "@",
                 items: [
                   {
-                    name: 'Amy Example',
-                    raw: '@user(2)',
-                    render: ''
+                    name: "Amy Example",
+                    raw: "@user(2)",
+                    render: ""
                   }
                 ]
               }
             ]
           },
           innerHTML: null
-        })
-      })
+        });
+      });
   }
-}
+};
 </script>
 
 <style>
-@import './assets/index.css';
+@import "./assets/index.css";
 </style>

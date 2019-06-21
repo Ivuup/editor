@@ -1,16 +1,16 @@
-import Core from '@/core'
+import Core from "../core";
 
 export default class Plugin {
-	core
+  core;
 
-	constructor(core) {
-		if (!(core instanceof Core))
-			throw new Error('Variable is not an instance of Core')
-			
-		this.core = core
-	}
+  constructor(core) {
+    if (!(core instanceof Core))
+      throw new Error("Variable is not an instance of Core");
 
-	exec(command, options) {
-		return this[command](options)
-	}
+    this.core = core;
+  }
+
+  exec(command, options) {
+    return this[command](options);
+  }
 }

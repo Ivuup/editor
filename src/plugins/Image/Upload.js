@@ -1,5 +1,5 @@
-import Plugin from "@/contracts/Plugin";
-import Button from "@/contracts/Button";
+import Plugin from "../../contracts/Plugin";
+import Button from "../../contracts/Button";
 
 export default class Upload extends Plugin {
   regex = /file:\/\/\/[\w|\W]*/;
