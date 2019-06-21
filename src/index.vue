@@ -1,7 +1,7 @@
 <template>
   <editor
     ref="editor"
-    :core="core || defaultCore"
+    :core="core"
     @blur="$emit('blur', $event)"
     @input="$emit('input', $event)"
     @editing="$emit('editing', $event)"
@@ -23,22 +23,33 @@ export default {
   },
   data() {
     return {
-      defaultCore: null,
-      test: null
+      core: null
     };
   },
   props: {
-    core: {
+    plugins: {
+      type: Array
+    },
+    config: {
       type: Object
+    },
+    value: {
+      type: String
     }
   },
   created() {
     if (!this.core)
       this.$nextTick().then(context => {
-        context.defaultCore = new Core({
+        context.core = new Core({
           editor: context.$refs.editor.$refs.content,
-          plugins: [Link, Hotkey, Preview, ...Format, ImageUpload],
-          config: {
+          plugins: context.plugins || [
+            Link,
+            Hotkey,
+            Preview,
+            ...Format,
+            ImageUpload
+          ],
+          config: context.config || {
             toolbar: [
               "alignment",
               "bold",
@@ -62,9 +73,14 @@ export default {
               }
             ]
           },
-          innerHTML: null
+          innerHTML: context.value || null
         });
       });
+  },
+  methods: {
+    getCore() {
+      return this.core;
+    }
   }
 };
 </script>
