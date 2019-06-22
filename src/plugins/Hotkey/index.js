@@ -7,6 +7,7 @@ export default class Hotkey extends Plugin {
   regex;
   regexWord;
   current;
+  currentList;
   currentIndex = {
     start: null,
     end: null
@@ -61,11 +62,20 @@ export default class Hotkey extends Plugin {
     if (!this.regexWord.test(this.current)) return;
 
     // pegar o marcador correto
-    // let marker = this._getMarker(current);
+    let marker = this._getMarker(this.current);
+
     // pesquisar lista
-    // renderizar lista
+    const exp = new RegExp(this.current.slice(1).trim(), "i");
+    this.currentList = marker.items
+      .filter(i => exp.test(i.name) || exp.test(i.raw))
+      .sort(a => {
+        const test = (a.name + a.raw).match(exp);
+        return test ? -test.length : 1;
+      });
+
+    // renderizar layout e abrir menu
     this.core._floatAction.component = View;
-    this.core._floatAction.value = true;
+    this.core._floatAction.value = this.currentList.length > 0;
   }
 
   _getMarker(word) {
@@ -87,9 +97,15 @@ export default class Hotkey extends Plugin {
     }
   }
 
+  /**
+   * Executado quando um item da lista eh selecionado
+   *
+   * @param {Element} editor
+   * @param {Object} item
+   */
   selectedItem(editor, item) {
     // caso item nao tenha click
-    if (!item.clickHandle) return;
+    if (!item.render) return;
 
     // adicionando o texto antes da hotkey
     if (this.currentIndex.start > 0) {
@@ -113,14 +129,13 @@ export default class Hotkey extends Plugin {
     );
 
     // executando acao da hotkey
-    let result = item.clickHandle(editor, element);
+    let result = item.render(this.core, element);
     if (!result) return;
     if (typeof result == "string") element.innerHTML = result;
 
     // adicionando o texto posterior da hotkey
     this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
-      this.currentIndex.end + 1,
-      this.core.selection.focusNode.data.length + 1
+      this.currentIndex.end + 1
     );
   }
 }

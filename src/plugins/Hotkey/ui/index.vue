@@ -1,7 +1,7 @@
 <template>
-  <v-list v-if="core.config.hotkey[0].items.length > 0">
+  <v-list v-if="core.plugins.Hotkey.currentList.length > 0">
     <v-list-tile
-      v-for="item in core.config.hotkey[0].items"
+      v-for="item in core.plugins.Hotkey.currentList"
       :key="item.raw"
       @click="core.exec('hotkey.selectedItem', item)"
     >

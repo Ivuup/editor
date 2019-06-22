@@ -2,7 +2,7 @@
   <v-menu
     ref="floatAction"
     absolute
-    :position-x="x"
+    min-width="100%"
     :position-y="y"
     :value="core._floatAction.value"
   >
@@ -18,8 +18,7 @@
 export default {
   data() {
     return {
-      y: 0,
-      x: 0
+      y: 0
     };
   },
   props: {
@@ -36,7 +35,6 @@ export default {
       let node =
         v.focusNode.nodeName != "P" ? v.focusNode.parentNode : v.focusNode;
       this.y = node.offsetTop + node.clientHeight - node.parentNode.scrollTop;
-      this.x = node.offsetLeft;
     }
   }
 };

@@ -36,14 +36,14 @@ export default {
               {
                 name: "Amy Example",
                 raw: "@user(2)",
-                clickHandle: () => {
+                render: () => {
                   return "Amy Example";
                 }
               },
               {
                 name: "Fake Data",
                 raw: "@user(1)",
-                clickHandle: (editor, element) => {
+                render: (core, element) => {
                   let target = document.createElement("div");
                   element.appendChild(target);
                   return this.mountComponent(target);
