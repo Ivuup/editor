@@ -6,6 +6,9 @@ export default class Hotkey extends Plugin {
   // regexMarkers
   regex;
   regexWord;
+  current;
+  target;
+
   constructor(core) {
     super(core);
     let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
@@ -14,6 +17,10 @@ export default class Hotkey extends Plugin {
     this.regex = new RegExp(`${markers}[\\w]*`);
     this.regexWord = new RegExp(`^${markers}[\\w]*`);
     // varrer o conteúdo e renderizar os componentes
+  }
+
+  onKeydown(event) {
+    this._checkActions(event);
   }
 
   onKeyup() {
@@ -35,13 +42,16 @@ export default class Hotkey extends Plugin {
         })()
       };
     });
-    let current = words.find(
+    this.current = words.find(
       (w, i) =>
         wordsIndex[i].start <= this.core.selection.focusOffset - 1 &&
         wordsIndex[i].end >= this.core.selection.focusOffset - 1
     );
 
-    if (!this.regexWord.test(current)) return;
+    // pegando o campo alvo
+    this.target = this.core.selection.focusNode.parentNode;
+
+    if (!this.regexWord.test(this.current)) return;
 
     // pegar o marcador correto
     // let marker = this._getMarker(current);
@@ -59,12 +69,37 @@ export default class Hotkey extends Plugin {
     // verificando se menu esta ativo
     if (!this.core._floatAction.value) return;
 
-    console.log(event.key);
     switch (event.key) {
       case "Escape":
         event.preventDefault();
         this.core._floatAction.value = false;
         break;
+      default:
+        this.core._floatAction.menu.changeListIndex(event);
+        break;
     }
+  }
+
+  selectedItem(editor, item) {
+    // caso item nao tenha click
+    if (!item.clickHandle) return;
+
+    this.target.innerHTML = this.target.innerHTML.replace(
+      this.current,
+      '<span id="hotkey-tmp"></span>&nbsp;'
+    );
+    let element = this.target.querySelector("#hotkey-tmp");
+    element.removeAttribute("id");
+    element.className = `hotkey ${item.class || ""}`;
+    element.contentEditable = false;
+    element.dataset.item = item.raw;
+
+    let result = item.clickHandle(editor, element);
+
+    window
+      .getSelection()
+      .setPosition(element.nextSibling, element.nextSibling.length);
+    if (!result) return;
+    if (typeof result == "string") element.innerHTML = result;
   }
 }

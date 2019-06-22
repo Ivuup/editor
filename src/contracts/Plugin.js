@@ -10,7 +10,7 @@ export default class Plugin {
     this.core = core;
   }
 
-  exec(command, options) {
-    return this[command](options);
+  exec(command, ...options) {
+    return this[command](...options);
   }
 }

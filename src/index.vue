@@ -59,19 +59,7 @@ export default {
               "horizontalRule"
             ],
             buttonToolbar: ["link", "uploadImage"],
-            placeholder: "Digite aqui...",
-            hotkey: [
-              {
-                marker: "@",
-                items: [
-                  {
-                    name: "Amy Example",
-                    raw: "@user(2)",
-                    render: ""
-                  }
-                ]
-              }
-            ]
+            placeholder: "Digite aqui..."
           },
           innerHTML: context.value || null
         });

@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    ref="floatAction"
     absolute
     :position-x="x"
     :position-y="y"
@@ -26,6 +27,9 @@ export default {
       type: Object,
       required: true
     }
+  },
+  mounted() {
+    this.core._floatAction.menu = this.$refs.floatAction;
   },
   watch: {
     "core.selection"(v) {

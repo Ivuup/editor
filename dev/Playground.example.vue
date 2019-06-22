@@ -1,9 +1,7 @@
 <template>
   <div class="container">
     <h1>Editor's Ivuup</h1>
-    <editor ref="editor"></editor>
-    <v-btn @click="mountComponent">render</v-btn>
-    <fake-data class="mt-5" :test="test"></fake-data>
+    <editor :config="config" ref="editor"></editor>
     <v-text-field v-model="test"></v-text-field>
   </div>
 </template>
@@ -15,23 +13,54 @@ import FakeData from "./components/FakeData.vue";
 
 export default {
   components: {
-    Editor,
-    FakeData
+    Editor
   },
   data() {
     return {
-      test: 20
+      test: 10,
+      config: {
+        toolbar: [
+          "alignment",
+          "bold",
+          "italic",
+          "underline",
+          "removeFormat",
+          "horizontalRule"
+        ],
+        buttonToolbar: ["link", "uploadImage"],
+        placeholder: "Digite aqui...",
+        hotkey: [
+          {
+            marker: "@",
+            items: [
+              {
+                name: "Amy Example",
+                raw: "@user(2)",
+                clickHandle: () => {
+                  return "Amy Example";
+                }
+              },
+              {
+                name: "Fake Data",
+                raw: "@user(1)",
+                clickHandle: (editor, element) => {
+                  let target = document.createElement("div");
+                  element.appendChild(target);
+                  return this.mountComponent(target);
+                }
+              }
+            ]
+          }
+        ]
+      }
     };
   },
   methods: {
-    mountComponent() {
-      new Vue({
-        el: this.$refs.editor.$refs.editor.core.editor.firstChild,
+    mountComponent(target) {
+      return new Vue({
+        el: target,
         render: h =>
           h(FakeData, {
-            domProps: {
-              contentEditable: false
-            },
             props: {
               test: this.test
             }

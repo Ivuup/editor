@@ -45,7 +45,7 @@ export default class {
    * e.g. command = pluginName.command
    * @param {String} command
    */
-  exec(command) {
+  exec(command, ...options) {
     let pluginName = /^\w*/.exec(command)[0].capitalize();
     let plugin = this.plugins[pluginName];
 
@@ -54,7 +54,11 @@ export default class {
     // Restaurando foco no editor
     this.editor.focus();
 
-    return plugin.exec(command.slice(pluginName.length + 1), this.editor);
+    return plugin.exec(
+      command.slice(pluginName.length + 1),
+      this.editor,
+      ...options
+    );
   }
 
   _handleKeydown(event) {
