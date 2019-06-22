@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1>Editor's Ivuup</h1>
-    <editor :config="config" ref="editor"></editor>
+    <editor :config="config" ref="editor" :value="value"></editor>
     <v-text-field v-model="test"></v-text-field>
   </div>
 </template>
@@ -15,10 +15,9 @@ export default {
   components: {
     Editor
   },
-  data() {
-    return {
-      test: 10,
-      config: {
+  computed: {
+    config() {
+      return {
         toolbar: [
           "alignment",
           "bold",
@@ -36,23 +35,29 @@ export default {
               {
                 name: "Amy Example",
                 raw: "@user(2)",
-                render: () => {
-                  return "Amy Example";
+                render: (core, createElement) => {
+                  let target = createElement();
+                  target.innerText = "Alexa";
                 }
               },
               {
                 name: "Fake Data",
-                raw: "@user(1)",
-                render: (core, element) => {
-                  let target = document.createElement("div");
-                  element.appendChild(target);
-                  return this.mountComponent(target);
+                raw: "@component(1)",
+                render: (core, createElement) => {
+                  let target = createElement("div");
+                  this.mountComponent(target);
                 }
               }
             ]
           }
         ]
-      }
+      };
+    }
+  },
+  data() {
+    return {
+      test: 10,
+      value: null
     };
   },
   methods: {

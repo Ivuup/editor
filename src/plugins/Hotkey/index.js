@@ -15,12 +15,13 @@ export default class Hotkey extends Plugin {
 
   constructor(core) {
     super(core);
-    let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
     // preparar regex de acordo com os marcadores
-    // this.regexMarkers = new RegExp(markers)
+    let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
     this.regex = new RegExp(`${markers}[\\w]*`);
+
     this.regexWord = new RegExp(`^${markers}[\\w]*`);
     // varrer o conteúdo e renderizar os componentes
+    this.loadComponents();
   }
 
   onKeydown(event) {
@@ -107,35 +108,61 @@ export default class Hotkey extends Plugin {
     // caso item nao tenha click
     if (!item.render) return;
 
-    // adicionando o texto antes da hotkey
-    if (this.currentIndex.start > 0) {
-      let start = document.createTextNode(
-        this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
-      );
+    // adicionando elemento da hotkey
+    let createElement = (nodeName = "span") => {
+      // adicionando o texto antes da hotkey
+      if (this.currentIndex.start > 0) {
+        let start = document.createTextNode(
+          this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
+        );
+        this.core.selection.focusNode.parentNode.insertBefore(
+          start,
+          this.core.selection.focusNode
+        );
+      }
+
+      let element = document.createElement(nodeName);
+      element.className = `hotkey ${item.class || ""}`;
+      element.contentEditable = false;
+      element.dataset.item = item.raw;
       this.core.selection.focusNode.parentNode.insertBefore(
-        start,
+        element,
         this.core.selection.focusNode
       );
-    }
 
-    // adicionando elemento da hotkey
-    let element = document.createElement("span");
-    element.className = `hotkey ${item.class || ""}`;
-    element.contentEditable = false;
-    element.dataset.item = item.raw;
-    this.core.selection.focusNode.parentNode.insertBefore(
-      element,
-      this.core.selection.focusNode
-    );
+      // adicionando o texto posterior da hotkey
+      this.core.selection.focusNode.data =
+        this.core.selection.focusNode.data.slice(this.currentIndex.end + 1) +
+        "\u00A0";
+
+      return element.appendChild(document.createElement("span"));
+    };
 
     // executando acao da hotkey
-    let result = item.render(this.core, element);
-    if (!result) return;
-    if (typeof result == "string") element.innerHTML = result;
+    item.render(this.core, createElement);
+  }
 
-    // adicionando o texto posterior da hotkey
-    this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
-      this.currentIndex.end + 1
-    );
+  /**
+   * Carrega os componentes do texto com as informacoes da lista
+   *
+   * TODO: rodar essa funcao quando ocorrer alteracao na lista
+   */
+  loadComponents() {
+    this.core.editor.querySelectorAll(".hotkey").forEach(element => {
+      if (!element.dataset.item) return;
+      // pega o marcador
+      let item = this._getMarker(element.dataset.item);
+      if (!item) throw new Error(`maker not found`);
+      // pega o item
+      item = item.items.find(i => i.raw == element.dataset.item);
+      if (!item) throw new Error(`${element.dataset.item} not found`);
+      element.innerHTML = null;
+      // executando acao da hotkey
+      let result = item.render(this.core, () =>
+        element.appendChild(document.createElement("span"))
+      );
+      if (!result) return;
+      if (typeof result == "string") element.innerHTML = result;
+    });
   }
 }
