@@ -7,7 +7,10 @@ export default class Hotkey extends Plugin {
   regex;
   regexWord;
   current;
-  target;
+  currentIndex = {
+    start: null,
+    end: null
+  };
 
   constructor(core) {
     super(core);
@@ -28,8 +31,6 @@ export default class Hotkey extends Plugin {
     // verifica se existe um marcador
     if (!this.regex.test(this.core.selection.focusNode.data)) return;
 
-    this.core.selection = null;
-    this.core.selection = window.getSelection();
     let words = this.core.selection.focusNode.data.split(" ");
     let count = 0;
     let wordsIndex = words.map(w => {
@@ -42,14 +43,20 @@ export default class Hotkey extends Plugin {
         })()
       };
     });
-    this.current = words.find(
-      (w, i) =>
+    // pegando o marcador atual
+    this.current = words.find((w, i) => {
+      if (
         wordsIndex[i].start <= this.core.selection.focusOffset - 1 &&
         wordsIndex[i].end >= this.core.selection.focusOffset - 1
-    );
-
-    // pegando o campo alvo
-    this.target = this.core.selection.focusNode.parentNode;
+      ) {
+        // salvando a posicao do marcador
+        this.currentIndex = {
+          start: wordsIndex[i].start,
+          end: wordsIndex[i].end
+        };
+        return true;
+      }
+    });
 
     if (!this.regexWord.test(this.current)) return;
 
@@ -84,22 +91,36 @@ export default class Hotkey extends Plugin {
     // caso item nao tenha click
     if (!item.clickHandle) return;
 
-    this.target.innerHTML = this.target.innerHTML.replace(
-      this.current,
-      '<span id="hotkey-tmp"></span>&nbsp;'
-    );
-    let element = this.target.querySelector("#hotkey-tmp");
-    element.removeAttribute("id");
+    // adicionando o texto antes da hotkey
+    if (this.currentIndex.start > 0) {
+      let start = document.createTextNode(
+        this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
+      );
+      this.core.selection.focusNode.parentNode.insertBefore(
+        start,
+        this.core.selection.focusNode
+      );
+    }
+
+    // adicionando elemento da hotkey
+    let element = document.createElement("span");
     element.className = `hotkey ${item.class || ""}`;
     element.contentEditable = false;
     element.dataset.item = item.raw;
+    this.core.selection.focusNode.parentNode.insertBefore(
+      element,
+      this.core.selection.focusNode
+    );
 
+    // executando acao da hotkey
     let result = item.clickHandle(editor, element);
-
-    window
-      .getSelection()
-      .setPosition(element.nextSibling, element.nextSibling.length);
     if (!result) return;
     if (typeof result == "string") element.innerHTML = result;
+
+    // adicionando o texto posterior da hotkey
+    this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
+      this.currentIndex.end + 1,
+      this.core.selection.focusNode.data.length + 1
+    );
   }
 }
