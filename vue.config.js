@@ -1,20 +1,19 @@
 module.exports = {
-  outputDir: '/build',
+  outputDir: "/build",
   pages: {
     index: {
-      entry: 'dev/main.js',
-      template: 'dev/index.html',
+      entry: "dev/main.js",
+      template: "dev/index.html"
     }
   },
   configureWebpack: {
     resolve: {
       alias: {
-        '@': __dirname + '/src'
+        "@": __dirname + "/src"
       }
-    },
-    
+    }
   },
   devServer: {
     disableHostCheck: true
   }
-}
+};

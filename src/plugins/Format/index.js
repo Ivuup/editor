@@ -1,10 +1,10 @@
-import Align from './Align'
-import Bold from './Style/Bold'
-import Italic from './Style/Italic'
-import Paragraph from './Paragraph'
-import Underline from './Style/Underline'
-import RemoveFormat from './RemoveFormat'
-import HorizontalRule from './HorizontalRule'
+import Align from "./Align";
+import Bold from "./Style/Bold";
+import Italic from "./Style/Italic";
+import Paragraph from "./Paragraph";
+import Underline from "./Style/Underline";
+import RemoveFormat from "./RemoveFormat";
+import HorizontalRule from "./HorizontalRule";
 
 export default [
   Bold,
@@ -13,5 +13,5 @@ export default [
   Paragraph,
   Underline,
   RemoveFormat,
-  HorizontalRule,
-]
+  HorizontalRule
+];

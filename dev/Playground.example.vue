@@ -49,6 +49,26 @@ export default {
                 }
               }
             ]
+          },
+          {
+            marker: "/",
+            items: [
+              {
+                name: "Teste de comando",
+                raw: "/command(2)",
+                render: (core, createElement) => {
+                  createElement(null, document.createTextNode("@"));
+                }
+              },
+              {
+                name: "Fake Data",
+                raw: "/component(1)",
+                render: (core, createElement) => {
+                  let target = createElement();
+                  this.mountComponent(target);
+                }
+              }
+            ]
           }
         ]
       };
@@ -57,7 +77,10 @@ export default {
   data() {
     return {
       test: 10,
-      value: null
+      value: `<p placeholder="Digite aqui...">Oi,&nbsp;<span class="hotkey " contenteditable="false" data-item="@user(2)"><span>Daniel Soares</span></span>.</p><p placeholder="Digite aqui..."><br></p><p placeholder="Digite aqui...">Olha esse componente!</p><p placeholder="Digite aqui..."><div class="hotkey " contenteditable="false" data-item="@component(1)"><div class="v-card v-sheet theme--light"><div class="v-card__title title">10asdasd</div><div class="v-card__text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo fugiat
+    saepe consectetur tempora optio, iusto neque natus impedit quasi aperiam
+    expedita dolores non? Maxime, quaerat exercitationem provident a modi
+    perferendis.</div></div></div><p placeholder="Digite aqui...">&nbsp;<br></p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">as</p><p placeholder="Digite aqui...">d</p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">as</p><p placeholder="Digite aqui...">d</p></p>`
     };
   },
   methods: {
@@ -68,9 +91,15 @@ export default {
           h(FakeData, {
             props: {
               test: this.test
+            },
+            on: {
+              input: this.inputTest
             }
           })
       });
+    },
+    inputTest(v) {
+      this.test = v;
     }
   }
 };

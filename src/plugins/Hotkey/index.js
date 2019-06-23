@@ -109,7 +109,7 @@ export default class Hotkey extends Plugin {
     if (!item.render) return;
 
     // adicionando elemento da hotkey
-    let createElement = (nodeName = "span") => {
+    let createElement = (nodeName = "span", customElement) => {
       // adicionando o texto antes da hotkey
       if (this.currentIndex.start > 0) {
         let start = document.createTextNode(
@@ -121,12 +121,18 @@ export default class Hotkey extends Plugin {
         );
       }
 
-      let element = document.createElement(nodeName);
-      element.className = `hotkey ${item.class || ""}`;
-      element.contentEditable = false;
-      element.dataset.item = item.raw;
+      let element;
+      // caso nao tenha um elemento customizado, cria um novo para controle do hotkey
+      if (!customElement) {
+        element = document.createElement(nodeName);
+        element.className = `hotkey ${item.class || ""}`;
+        element.contentEditable = false;
+        element.dataset.item = item.raw;
+      }
+
+      // adiciona o elemento ao editor
       this.core.selection.focusNode.parentNode.insertBefore(
-        element,
+        customElement || element,
         this.core.selection.focusNode
       );
 
@@ -135,7 +141,10 @@ export default class Hotkey extends Plugin {
         this.core.selection.focusNode.data.slice(this.currentIndex.end + 1) +
         "\u00A0";
 
-      return element.appendChild(document.createElement("span"));
+      // retorna o elemento alvo
+      return (
+        customElement || element.appendChild(document.createElement("span"))
+      );
     };
 
     // executando acao da hotkey
