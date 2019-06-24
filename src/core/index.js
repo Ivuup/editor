@@ -51,9 +51,6 @@ export default class {
 
     if (!plugin) throw new Error("Plugin not found");
 
-    // Restaurando foco no editor
-    this.editor.focus();
-
     return plugin.exec(
       command.slice(pluginName.length + 1),
       this.editor,
