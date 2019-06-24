@@ -25,7 +25,7 @@ export default class {
   constructor({ editor, layout, innerHTML, plugins, config }) {
     this.editor = editor;
     this.layout = layout || Layout;
-    this.editor.innerHTML = innerHTML || "<p></p>";
+    this.editor.innerHTML = innerHTML ? innerHTML : "<p></p>";
     this.editor.designMode = true;
     this.editor.contentEditable = true;
     this._configurations(config);

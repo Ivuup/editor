@@ -1,9 +1,10 @@
 <template>
   <v-menu
     ref="floatAction"
+    attach
     absolute
     min-width="100%"
-    :position-y="y"
+    :style="`width: 100%; position: absolute; top: ${y}px`"
     :value="core._floatAction.value"
   >
     <div

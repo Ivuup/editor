@@ -161,10 +161,10 @@ export default class Hotkey extends Plugin {
       if (!element.dataset.item) return;
       // pega o marcador
       let item = this._getMarker(element.dataset.item);
-      if (!item) throw new Error(`maker not found`);
+      if (!item || !item.items) return;
       // pega o item
       item = item.items.find(i => i.raw == element.dataset.item);
-      if (!item) throw new Error(`${element.dataset.item} not found`);
+      if (!item) return;
       element.innerHTML = null;
       // executando acao da hotkey
       let result = item.render(this.core, () =>
@@ -173,5 +173,18 @@ export default class Hotkey extends Plugin {
       if (!result) return;
       if (typeof result == "string") element.innerHTML = result;
     });
+  }
+
+  /**
+   * Altera um lista de items de um marcador
+   *
+   * @param {Element} editor
+   * @param {String} marker
+   * @param {Array} items
+   */
+  setItemsToMarker(editor, marker, items) {
+    marker = this._getMarker(marker);
+    if (marker) marker.items = items;
+    this.loadComponents();
   }
 }
