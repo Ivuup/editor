@@ -149,6 +149,7 @@ export default class {
       this.editor.focus();
     }
     // mostra texto caso o editor esteja vazio
-    this.editor.children[0].setAttribute("placeholder", config.placeholder);
+    if (this.editor.children[0])
+      this.editor.children[0].setAttribute("placeholder", config.placeholder);
   }
 }

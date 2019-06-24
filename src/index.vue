@@ -69,6 +69,11 @@ export default {
     getCore() {
       return this.core;
     }
+  },
+  watch: {
+    value(v) {
+      if (v !== this.core.editor.innerHTML) this.core.editor.innerHTML = v;
+    }
   }
 };
 </script>

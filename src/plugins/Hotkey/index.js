@@ -137,9 +137,10 @@ export default class Hotkey extends Plugin {
       );
 
       // adicionando o texto posterior da hotkey
-      this.core.selection.focusNode.data =
-        this.core.selection.focusNode.data.slice(this.currentIndex.end + 1) +
-        "\u00A0";
+      this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
+        this.currentIndex.end + 1
+      );
+      document.execCommand("insertText", false, " ");
 
       // retorna o elemento alvo
       return (
