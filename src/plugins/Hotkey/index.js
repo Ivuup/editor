@@ -108,19 +108,20 @@ export default class Hotkey extends Plugin {
     // caso item nao tenha click
     if (!item.render) return;
 
+    // adicionando o texto antes da hotkey
+    if (this.currentIndex.start > 0) {
+      let start = document.createTextNode(
+        this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
+      );
+      this.core.selection.focusNode.parentNode.insertBefore(
+        start,
+        this.core.selection.focusNode
+      );
+      document.execCommand("insertText", false, " ");
+    }
+
     // adicionando elemento da hotkey
     let createElement = (nodeName = "span", customElement) => {
-      // adicionando o texto antes da hotkey
-      if (this.currentIndex.start > 0) {
-        let start = document.createTextNode(
-          this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
-        );
-        this.core.selection.focusNode.parentNode.insertBefore(
-          start,
-          this.core.selection.focusNode
-        );
-      }
-
       let element;
       // caso nao tenha um elemento customizado, cria um novo para controle do hotkey
       if (!customElement) {
@@ -136,10 +137,6 @@ export default class Hotkey extends Plugin {
         this.core.selection.focusNode
       );
 
-      // adicionando o texto posterior da hotkey
-      this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
-        this.currentIndex.end + 1
-      );
       document.execCommand("insertText", false, " ");
 
       // retorna o elemento alvo
@@ -147,6 +144,11 @@ export default class Hotkey extends Plugin {
         customElement || element.appendChild(document.createElement("span"))
       );
     };
+
+    // adicionando o texto posterior da hotkey
+    this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
+      this.currentIndex.end + 1
+    );
 
     // executando acao da hotkey
     item.render(this.core, createElement);
