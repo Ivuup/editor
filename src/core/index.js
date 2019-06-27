@@ -5,6 +5,7 @@ String.prototype.capitalize = function() {
 import Layout from "../ui/layout";
 import Plugin from "../contracts/Plugin";
 import Button from "../contracts/Button";
+import parserElement from "../utils/parseElement";
 
 export default class {
   plugins = {};
@@ -151,5 +152,9 @@ export default class {
     // mostra texto caso o editor esteja vazio
     if (this.editor.children[0])
       this.editor.children[0].setAttribute("placeholder", config.placeholder);
+  }
+
+  setContent(content) {
+    parserElement(this.editor, content);
   }
 }

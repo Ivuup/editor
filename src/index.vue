@@ -72,7 +72,7 @@ export default {
   },
   watch: {
     value(v) {
-      if (v !== this.core.editor.innerHTML) this.core.editor.innerHTML = v;
+      if (v !== this.core.editor.innerHTML) this.core.setContent(v);
     }
   }
 };
