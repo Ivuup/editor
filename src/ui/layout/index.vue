@@ -39,7 +39,9 @@ export default {
   methods: {
     command(command) {
       this.core.editor.focus();
-      this.core.exec(command);
+      if (typeof command == "function") return this.core.exec(...command());
+
+      return this.core.exec(command);
     }
   },
   watch: {

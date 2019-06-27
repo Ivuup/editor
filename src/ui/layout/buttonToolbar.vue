@@ -22,6 +22,7 @@
 
 <script>
 import Btn from "../button";
+import Button from "../../contracts/Button";
 
 export default {
   components: {
@@ -31,7 +32,7 @@ export default {
     buttons() {
       return this.core.config.buttonToolbar
         .slice()
-        .map(i => this.core.enabledButtons[i]);
+        .map(i => (i instanceof Button ? i : this.core.enabledButtons[i]));
     }
   },
   data() {
