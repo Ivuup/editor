@@ -75,7 +75,7 @@ export default class Hotkey extends Plugin {
       });
 
     // renderizar layout e abrir menu
-    this.core._floatAction.component = View;
+    this.core._floatAction.component = marker.view || View;
     this.core._floatAction.value = this.currentList.length > 0;
   }
 

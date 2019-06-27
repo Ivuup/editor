@@ -1,8 +1,9 @@
 <template>
   <div class="container">
     <h1>Editor's Ivuup</h1>
-    <editor :config="config" ref="editor" :value="value"></editor>
-    <v-text-field v-model="test"></v-text-field>
+    <editor :config="config" ref="editor" v-model="value"></editor>
+    <v-text-field v-model="value"></v-text-field>
+    <v-btn @click="changeContent">change content</v-btn>
   </div>
 </template>
 
@@ -10,23 +11,53 @@
 import Vue from "vue";
 import Editor from "@/index.vue";
 import FakeData from "./components/FakeData.vue";
+import Button from "@/contracts/Button";
+import CustomViewHotkey from "./components/CustomViewHotkey.vue";
 
 export default {
   components: {
     Editor
   },
   computed: {
+    value: {
+      set(v) {
+        localStorage.setItem("value", v);
+        this.data = v;
+      },
+      get() {
+        // this.data = localStorage.getItem("value");
+        return localStorage.getItem("value");
+      }
+    },
     config() {
       return {
+        innerHTML: this.value,
         toolbar: [
-          "alignment",
+          "align-left",
           "bold",
           "italic",
           "underline",
           "removeFormat",
           "horizontalRule"
         ],
-        buttonToolbar: ["link", "uploadImage"],
+        buttonToolbar: [
+          "link",
+          "uploadImage",
+          new Button(
+            "mention",
+            () => [
+              "hotkey.selectedItem",
+              {
+                name: "Teste de comando",
+                render: core => {
+                  document.execCommand("insertText", false, "@");
+                  core.exec("hotkey.onKeyup");
+                }
+              }
+            ],
+            "alternate_email"
+          )
+        ],
         placeholder: "Digite aqui...",
         hotkey: [
           {
@@ -37,7 +68,7 @@ export default {
                 raw: "@user(2)",
                 render: (core, createElement) => {
                   let target = createElement();
-                  target.innerText = "Alexa";
+                  target.innerText = "Daniel";
                 }
               },
               {
@@ -52,12 +83,13 @@ export default {
           },
           {
             marker: "/",
+            view: CustomViewHotkey,
             items: [
               {
                 name: "Teste de comando",
-                raw: "/command(2)",
                 render: (core, createElement) => {
-                  createElement(null, document.createTextNode("@"));
+                  createElement(null, document.createTextNode(""));
+                  core.exec("upload.new");
                 }
               },
               {
@@ -76,16 +108,14 @@ export default {
   },
   data() {
     return {
-      test: 10,
-      value: `<p placeholder="Digite aqui...">Oi,&nbsp;<span class="hotkey " contenteditable="false" data-item="@user(2)"><span>Daniel Soares</span></span>.</p><p placeholder="Digite aqui..."><br></p><p placeholder="Digite aqui...">Olha esse componente!</p><p placeholder="Digite aqui..."><div class="hotkey " contenteditable="false" data-item="@component(1)"><div class="v-card v-sheet theme--light"><div class="v-card__title title">10asdasd</div><div class="v-card__text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo fugiat
-    saepe consectetur tempora optio, iusto neque natus impedit quasi aperiam
-    expedita dolores non? Maxime, quaerat exercitationem provident a modi
-    perferendis.</div></div></div><p placeholder="Digite aqui...">&nbsp;<br></p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">as</p><p placeholder="Digite aqui...">d</p><p placeholder="Digite aqui...">asd</p><p placeholder="Digite aqui...">as</p><p placeholder="Digite aqui...">d</p></p>`
+      test: "abc",
+      data: null
     };
   },
   methods: {
     mountComponent(target) {
       return new Vue({
+        parent: this,
         el: target,
         render: h =>
           h(FakeData, {
@@ -100,6 +130,16 @@ export default {
     },
     inputTest(v) {
       this.test = v;
+    },
+    changeContent() {
+      setTimeout(() => {
+        this.$refs.editor.getCore().setContent(`<h1>Título</h1>
+          <p>an text here</p>
+          <p>an another <a href="#">text</a> <span>here</span></p>
+          <p>an another <b>text</b> <span>here</span></p>`);
+
+        this.changeContent();
+      }, 3000);
     }
   }
 };
