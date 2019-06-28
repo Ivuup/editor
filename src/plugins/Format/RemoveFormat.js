@@ -4,7 +4,14 @@ import Button from "../../contracts/Button";
 export default class RemoveFormat extends Plugin {
   prefix = "removeFormat";
 
-  buttons = [new Button("removeFormat", "removeFormat.remove", "format_clear")];
+  buttons = [
+    new Button(
+      "removeFormat",
+      "removeFormat.remove",
+      "format_clear",
+      "Remover formatação"
+    )
+  ];
 
   remove() {
     document.execCommand("removeFormat", false, "");

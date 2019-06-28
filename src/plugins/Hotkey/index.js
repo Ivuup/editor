@@ -148,9 +148,10 @@ export default class Hotkey extends Plugin {
     };
 
     // adicionando o texto posterior da hotkey
-    this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
-      this.currentIndex.end + 1
-    );
+    if (this.core.selection.focusNode.data)
+      this.core.selection.focusNode.data = this.core.selection.focusNode.data.slice(
+        this.currentIndex.end + 1
+      );
 
     // executando acao da hotkey
     item.render(this.core, createElement);

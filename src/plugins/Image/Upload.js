@@ -4,7 +4,9 @@ import Button from "../../contracts/Button";
 export default class Upload extends Plugin {
   prefix = "upload";
   regex = /file:\/\/\/[\w|\W]*/;
-  buttons = [new Button("uploadImage", "upload.new", "add_a_photo")];
+  buttons = [
+    new Button("uploadImage", "upload.new", "add_a_photo", "Inserir imagem")
+  ];
 
   constructor(core) {
     super(core);

@@ -3,7 +3,7 @@ import Button from "../../contracts/Button";
 
 export default class Link extends Plugin {
   prefix = "link";
-  buttons = [new Button("link", "link.create", "link")];
+  buttons = [new Button("link", "link.create", "link", "Inserir link")];
 
   create(url) {
     if (typeof url != "string") url = prompt("Digite a URL");

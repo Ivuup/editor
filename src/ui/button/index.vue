@@ -1,6 +1,6 @@
 <template>
   <v-menu attach bottom offset-y v-if="typeof item.command == 'object'">
-    <v-btn icon small slot="activator">
+    <v-btn icon small class="mx-0" slot="activator" :title="item.title">
       <v-icon small>format_align_justify</v-icon>
     </v-btn>
     <v-card>
@@ -17,7 +17,8 @@
     icon
     small
     @click="$emit('command', item.command)"
-    class="mx-1"
+    class="mx-0"
+    :title="item.title"
     :color="item.active ? 'grey lighten-2' : null"
   >
     <v-icon small>{{ item.icon }}</v-icon>

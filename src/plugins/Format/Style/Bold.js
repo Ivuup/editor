@@ -3,7 +3,7 @@ import Button from "../../../contracts/Button";
 
 export default class Bold extends Plugin {
   prefix = "bold";
-  buttons = [new Button("bold", "bold.toggle", "format_bold")];
+  buttons = [new Button("bold", "bold.toggle", "format_bold", "Negríto")];
 
   onKeydown() {
     //TODO: Melhorar verificacao
