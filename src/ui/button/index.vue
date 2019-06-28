@@ -1,7 +1,7 @@
 <template>
   <v-menu attach bottom offset-y v-if="typeof item.command == 'object'">
     <v-btn icon small slot="activator">
-      <v-icon>format_align_justify</v-icon>
+      <v-icon small>format_align_justify</v-icon>
     </v-btn>
     <v-card>
       <recursive-button
@@ -20,7 +20,7 @@
     class="mx-1"
     :color="item.active ? 'grey lighten-2' : null"
   >
-    <v-icon>{{ item.icon }}</v-icon>
+    <v-icon small>{{ item.icon }}</v-icon>
   </v-btn>
 </template>
 

@@ -2,6 +2,7 @@ import Plugin from "../../contracts/Plugin";
 import Button from "../../contracts/Button";
 
 export default class Link extends Plugin {
+  prefix = "link";
   buttons = [new Button("link", "link.create", "link")];
 
   create(url) {
@@ -11,7 +12,7 @@ export default class Link extends Plugin {
 
     if (!/^http/.test(url)) url = "https://" + url;
 
-    let previewPlugin = this.core.plugins["Preview"];
+    let previewPlugin = this.core.plugins["preview"];
     if (previewPlugin)
       previewPlugin.getLinkPreview(url, this.core.selection.focusNode);
     else document.execCommand("createLink", false, url);

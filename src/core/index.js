@@ -1,7 +1,3 @@
-String.prototype.capitalize = function() {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-};
-
 import Layout from "../ui/layout";
 import Plugin from "../contracts/Plugin";
 import Button from "../contracts/Button";
@@ -47,7 +43,7 @@ export default class {
    * @param {String} command
    */
   exec(command, ...options) {
-    let pluginName = /^\w*/.exec(command)[0].capitalize();
+    let pluginName = /^\w*/.exec(command)[0].toLowerCase();
     let plugin = this.plugins[pluginName];
 
     if (!plugin) throw new Error("Plugin not found");
@@ -121,7 +117,7 @@ export default class {
       if (!(plugin instanceof Plugin))
         throw new Error("Variable is not an instance of Plugin");
       // TODO: preparar botoes, eventos etc
-      this.plugins[plugin.constructor.name] = plugin;
+      this.plugins[plugin.prefix.toLowerCase()] = plugin;
       this._enableButtons(plugin);
     });
   }

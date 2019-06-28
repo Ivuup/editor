@@ -2,6 +2,7 @@ import Plugin from "../../../contracts/Plugin";
 import Button from "../../../contracts/Button";
 
 export default class Italic extends Plugin {
+  prefix = "italic";
   buttons = [new Button("italic", "italic.toggle", "format_italic")];
 
   onKeydown() {

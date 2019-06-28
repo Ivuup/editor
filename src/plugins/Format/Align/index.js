@@ -16,6 +16,7 @@ let alignment = new Button(
 );
 
 export default class Align extends Plugin {
+  prefix = "align";
   buttons = [left, right, center, justify, alignment];
 
   left() {

@@ -6,7 +6,6 @@
     min-width="100%"
     :style="`width: 100%; position: absolute; top: ${y}px`"
     :value="core._floatAction.value"
-    :close-on-content-click="false"
   >
     <div
       v-if="core._floatAction.component"

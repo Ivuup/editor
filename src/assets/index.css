@@ -15,7 +15,7 @@
 }
 .i-content p:only-child:empty:before {
   content: attr(placeholder);
-  color: #555; 
+  color: #a1a1a1; 
 }
 .i-content:focus {
   outline: none;

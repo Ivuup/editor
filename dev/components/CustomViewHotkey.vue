@@ -1,5 +1,5 @@
 <template>
-  <div>{{ core.plugins.Hotkey.currentList }}</div>
+  <div>{{ core.plugins.hotkey.currentList }}</div>
 </template>
 
 <script>

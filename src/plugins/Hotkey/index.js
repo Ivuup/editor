@@ -3,6 +3,8 @@ import View from "./ui";
 
 // TODO: Implementar
 export default class Hotkey extends Plugin {
+  prefix = "hotkey";
+
   // regexMarkers
   regex;
   regexWord;
