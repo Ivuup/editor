@@ -47,7 +47,9 @@ export default {
   watch: {
     core() {
       // ativar eventos
-      this.core.blurCallback = (event => this.$emit("blur", event)).bind(this);
+      this.core.blurCallback = (payload => this.$emit("blur", payload)).bind(
+        this
+      );
       this.core.editingCallback = (boolean =>
         this.$emit("editing", boolean)).bind(this);
       this.core.inputCallback = (payload => this.$emit("input", payload)).bind(

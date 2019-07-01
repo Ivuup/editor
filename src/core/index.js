@@ -101,7 +101,7 @@ export default class {
   }
 
   _handleBlur(event) {
-    this.blurCallback(event);
+    this.blurCallback([this.editor.innerHTML, event]);
   }
 
   /**
