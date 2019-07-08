@@ -119,7 +119,6 @@ export default class Hotkey extends Plugin {
         start,
         this.core.selection.focusNode
       );
-      document.execCommand("insertText", false, " ");
     }
 
     // adicionando elemento da hotkey
@@ -138,8 +137,6 @@ export default class Hotkey extends Plugin {
         customElement || element,
         this.core.selection.focusNode
       );
-
-      document.execCommand("insertText", false, " ");
 
       // retorna o elemento alvo
       return (

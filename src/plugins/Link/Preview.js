@@ -2,11 +2,10 @@ import Plugin from "../../contracts/Plugin";
 
 export default class Preview extends Plugin {
   prefix = "preview";
-  regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
+  regex = /^[https?://|(www.)]*[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
   apiUrl = "https://linkpreview-api.herokuapp.com/";
   response;
-  lastText = "";
-  lastNode;
+  currentWord;
 
   /**
    * Verifica se o que foi colado é uma url
@@ -15,8 +14,18 @@ export default class Preview extends Plugin {
    */
   onPaste(event) {
     let text = event.clipboardData.getData("TEXT");
-    if (this.regex.test(text)) {
-      event.preventDefault();
+
+    if (
+      this.core.config &&
+      this.core.config.preview &&
+      this.core.config.preview.onPaste &&
+      this.core.config.preview.onPaste instanceof Array &&
+      this.core.config.preview.onPaste.some(func =>
+        func(event, text, this.core.editor)
+      )
+    )
+      return;
+    else if (this.regex.test(text)) {
       this.getLinkPreview(
         this.regex.exec(text)[0],
         this.core.selection.focusNode
@@ -29,30 +38,16 @@ export default class Preview extends Plugin {
    *
    * @param {InputEvent} event
    */
-  onInput(event) {
-    if (event.inputType != "insertText") return;
+  onKeyup(event) {
+    if (event.code != "Enter" && event.code != "Space") {
+      this.currentWord = this.core._helpers.currentWord;
+      return;
+    }
+    let result = this.regex.exec(this.currentWord.word);
+    if (!result) return;
 
-    if (event.data && event.data != " ") {
-      this.lastNode = this.core.selection.focusNode;
-      this.lastNode =
-        this.lastNode.parentNode == this.core.editor
-          ? this.lastNode
-          : this.lastNode.parentNode;
-      this.lastText =
-        this.core.selection.focusNode.innerText ||
-        this.core.selection.focusNode.textContent;
-      return;
-    }
-    if (
-      !this.regex.test(this.lastText) ||
-      (this.lastNode.previousSibling &&
-        this.lastNode.previousSibling.className == "link-preview")
-    ) {
-      this.lastNode = null;
-      this.lastText = null;
-      return;
-    }
-    this.getLinkPreview(this.regex.exec(this.lastText)[0]);
+    // this.createAnchorLink(result);
+    this.getLinkPreview(result[0]);
   }
 
   /**
@@ -66,21 +61,22 @@ export default class Preview extends Plugin {
       url,
       response => {
         response = JSON.parse(response);
+        if (response.images.length <= 0) return;
+
         let preview = document.createElement("a");
         preview.className = "link-preview";
         preview.contentEditable = false;
         preview.href = response.url;
         preview.target = "_blank";
         preview.innerHTML = `
-        <div class="wrap">
-          <img src="${response.images[0]}" class="preview-image" />
-          <div>
-            <h3 class="preview-title">${response.title}</h3>
-            <span class="preview-description">${response.description}</span>
+          <div class="wrap">
+            <img src="${response.images[0]}" class="preview-image" />
+            <div>
+              <h3 class="preview-title">${response.title}</h3>
+              <span class="preview-description">${response.description}</span>
+            </div>
           </div>
-        </div>
-      `;
-        document.execCommand("createLink", false, url);
+        `;
         document.execCommand(
           "insertHTML",
           false,
@@ -102,6 +98,7 @@ export default class Preview extends Plugin {
    * @param {Function} error
    */
   _httpRequest(url, success, error) {
+    url = /^http/.test(url) ? url : "https://" + url;
     const http = new XMLHttpRequest();
     const params = "url=" + url;
     http.open("POST", this.apiUrl, true);
@@ -115,5 +112,30 @@ export default class Preview extends Plugin {
       }
     };
     http.send(params);
+  }
+
+  createAnchorLink(match) {
+    // adicionando o texto antes da hotkey
+    if (match.index > 0) {
+      let start = document.createTextNode(
+        this.currentWord.node.data.slice(0, match.index)
+      );
+      this.currentWord.node.parentNode.insertBefore(
+        start,
+        this.currentWord.node
+      );
+    }
+    let a = document.createElement("a");
+    a.href = match[0];
+    a.target = "_blank";
+    a.innerText = match[0];
+
+    this.currentWord.node.parentNode.insertBefore(a, this.currentWord.node);
+
+    this.currentWord.node.data = this.currentWord.node.data.slice(
+      match.index + match[0].length
+    );
+
+    document.execCommand("insertText", false, " ");
   }
 }

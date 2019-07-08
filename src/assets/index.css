@@ -49,17 +49,26 @@
   text-decoration: none;
   color: inherit;
 }
+.i-editor .link-preview {
+  cursor: unset;
+}
 .i-editor .link-preview .wrap {
+  cursor: pointer;
   flex-direction: row;
-  margin: 15px 5px 5px;
   padding: 15px;
-  border: #e3e3e3 solid 1px;
   border-radius: 5px;
+  margin: 5px;
   border-left: 5px solid #e3e3e3;
   opacity: .8;
   transition: opacity 200ms;
   user-select: none;
   background: white;
+  max-height: 90px;
+  width: fit-content;
+  max-width: 80%;
+  box-shadow: 0 2px 1px -1px rgba(0,0,0,.2),
+    0 1px 1px 0 rgba(0,0,0,.14),
+    0 1px 3px 0 rgba(0,0,0,.12);
 }
 .i-editor .link-preview .wrap:hover {
   opacity: 1;
@@ -71,7 +80,8 @@
   line-height: 1.1;
 }
 .i-editor .link-preview img {
-  width: 150px;
+  width: 100%;
+  max-width: 100px;
   height: auto;
 }
 

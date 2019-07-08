@@ -2,6 +2,7 @@ import Layout from "../ui/layout";
 import Plugin from "../contracts/Plugin";
 import Button from "../contracts/Button";
 import parserElement from "../utils/parseElement";
+import currentWord from "../utils/currentWord";
 
 export default class {
   plugins = {};
@@ -13,6 +14,9 @@ export default class {
   _floatAction = {};
   delayInput = 1000;
   _editing = null;
+  _helpers = {
+    currentWord: {}
+  };
 
   /**
    * Constrói a base do editor
@@ -56,6 +60,8 @@ export default class {
   }
 
   _handleKeydown(event) {
+    this._helpers.currentWord = currentWord();
+
     this.selection = null;
     this.selection = window.getSelection();
     Object.keys(this.plugins).forEach(plugin =>
@@ -77,6 +83,7 @@ export default class {
     if (this._editing) clearTimeout(this._editing);
 
     this._editing = setTimeout(() => {
+      this._addLine();
       this.inputCallback([this.editor.innerHTML]);
       this.editingCallback(false);
       this._editing = null;
@@ -94,6 +101,8 @@ export default class {
       }"></p>`;
     this.selection = null;
     this.selection = window.getSelection();
+
+    this._helpers.currentWord = currentWord();
 
     Object.keys(this.plugins).forEach(plugin =>
       this.plugins[plugin].onKeyup ? this.plugins[plugin].onKeyup(event) : null
@@ -140,6 +149,10 @@ export default class {
 
   _configurations(config) {
     this.config = config;
+
+    // configura a adição da ultima linha
+    this.config.autoAddLine = this.config.autoAddLine || true;
+
     this._floatAction = { value: false };
     // atribui foco ao editor ao iniciar
     if (this.config.autofocus) {
@@ -152,5 +165,15 @@ export default class {
 
   setContent(content) {
     parserElement(this.editor, content);
+  }
+
+  _addLine() {
+    if (
+      this.config.autoAddLine &&
+      (!this.editor.lastChild ||
+        !!this.editor.lastChild.innerText ||
+        !!this.editor.lastChild.data)
+    )
+      this.editor.append(document.createElement("p"));
   }
 }
