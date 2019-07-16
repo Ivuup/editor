@@ -53,7 +53,7 @@ export default class Upload extends Plugin {
     // lendo arquivos
     for (let i = 0; i < files.length; i++) {
       let reader = new FileReader();
-      reader.onloadend = function() {
+      reader.onloadend = () => {
         const width = this.core.config.upload.width || 'unset'
         const asLink = this.core.config.upload.asLink
         const html = asLink 
