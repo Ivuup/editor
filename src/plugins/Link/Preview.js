@@ -61,6 +61,8 @@ export default class Preview extends Plugin {
       response = JSON.parse(response);
       if (response.images.length <= 0) return;
 
+      const maxWidth = this.core.config.preview.image.maxWidth || 'unset'
+
       let preview = document.createElement("a");
       preview.className = "link-preview";
       preview.contentEditable = false;
@@ -68,7 +70,7 @@ export default class Preview extends Plugin {
       preview.target = "_blank";
       preview.innerHTML = `
           <div class="wrap">
-            <img src="${response.images[0]}" class="preview-image" />
+            <img src="${response.images[0]}" class="preview-image" width="${maxWidth}"/>
             <div>
               <h3 class="preview-title">${response.title}</h3>
               <span class="preview-description">${response.description}</span>
