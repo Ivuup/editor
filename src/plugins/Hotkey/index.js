@@ -133,10 +133,19 @@ export default class Hotkey extends Plugin {
       }
 
       // adiciona o elemento ao editor
-      this.core.selection.focusNode.parentNode.insertBefore(
-        customElement || element,
-        this.core.selection.focusNode
-      );
+      if (
+        (customElement && customElement.nodeName == "SPAN") ||
+        element.nodeName == "SPAN"
+      )
+        this.core.selection.focusNode.parentNode.insertBefore(
+          customElement || element,
+          this.core.selection.focusNode
+        );
+      else
+        this.core.selection.focusNode.parentNode.insertAdjacentElement(
+          "afterend",
+          customElement || element
+        );
 
       // retorna o elemento alvo
       return (
@@ -152,6 +161,8 @@ export default class Hotkey extends Plugin {
 
     // executando acao da hotkey
     item.render(this.core, createElement);
+
+    this.core.editor.dispatchEvent(new Event("input"));
   }
 
   /**

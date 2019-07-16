@@ -46,7 +46,12 @@ export default class Preview extends Plugin {
     let result = this.regex.exec(this.currentWord.word);
     if (!result) return;
 
-    this.getLinkPreview(result[0]);
+    try {
+      this.getLinkPreview(result[0]);
+      this.currentWord = {};
+    } catch (e) {
+      this.currentWord = {};
+    }
   }
 
   /**
@@ -61,7 +66,7 @@ export default class Preview extends Plugin {
       response = JSON.parse(response);
       if (response.images.length <= 0) return;
 
-      const maxWidth = this.core.config.preview.image.maxWidth || 'unset'
+      const maxWidth = this.core.config.preview.image.maxWidth || "unset";
 
       let preview = document.createElement("a");
       preview.className = "link-preview";
@@ -70,7 +75,9 @@ export default class Preview extends Plugin {
       preview.target = "_blank";
       preview.innerHTML = `
           <div class="wrap">
-            <img src="${response.images[0]}" class="preview-image" width="${maxWidth}"/>
+            <img src="${
+              response.images[0]
+            }" class="preview-image" width="${maxWidth}"/>
             <div>
               <h3 class="preview-title">${response.title}</h3>
               <span class="preview-description">${response.description}</span>
@@ -113,6 +120,7 @@ export default class Preview extends Plugin {
 
   createAnchorLink(url) {
     if (!(this.currentWord.node instanceof Node)) {
+      url = /^http/.test(url) ? url : "https://" + url;
       document.execCommand("createLink", false, url);
       return;
     }
@@ -127,9 +135,11 @@ export default class Preview extends Plugin {
       );
     }
     let a = document.createElement("a");
-    a.href = this.currentWord.word;
+    a.href = /^http/.test(url || this.currentWord.word)
+      ? url || this.currentWord.word
+      : "https://" + url || this.currentWord.word;
     a.target = "_blank";
-    a.innerText = this.currentWord.word;
+    a.innerText = url || this.currentWord.word;
 
     this.currentWord.node.parentNode.insertBefore(a, this.currentWord.node);
 
@@ -137,6 +147,6 @@ export default class Preview extends Plugin {
       this.currentWord.end + 1
     );
 
-    window.getSelection().setPosition(a.nextSibling, 1);
+    window.getSelection().setPosition(a.nextSibling, a.nextSibling.length);
   }
 }

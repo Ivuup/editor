@@ -1,9 +1,14 @@
 <template>
-  <div class="container">
-    <h1>Editor's Ivuup</h1>
-    <editor :config="config" ref="editor" v-model="value"></editor>
-    <v-text-field v-model="value"></v-text-field>
-    <v-btn @click="changeContent">change content</v-btn>
+  <div class="container fill-height">
+    <v-layout column>
+      <h1>Editor's Ivuup</h1>
+      <v-btn icon @click="config.readOnly.active = !config.readOnly.active"
+        ><v-icon>edit</v-icon></v-btn
+      >
+      <v-flex>
+        <editor :config="config" ref="editor" v-model="value"></editor>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
@@ -12,7 +17,6 @@ import Vue from "vue";
 import Editor from "@/index.vue";
 import FakeData from "./components/FakeData.vue";
 import Button from "@/contracts/Button";
-import CustomViewHotkey from "./components/CustomViewHotkey.vue";
 
 export default {
   components: {
@@ -22,18 +26,19 @@ export default {
     value: {
       set(v) {
         localStorage.setItem("value", v);
-        this.data = v;
       },
       get() {
-        // this.data = localStorage.getItem("value");
         return localStorage.getItem("value");
       }
-    },
-    config() {
-      return {
+    }
+  },
+  data() {
+    return {
+      test: "abc",
+      config: {
         innerHTML: this.value,
         toolbar: [
-          "align-left",
+          "alignment",
           "bold",
           "italic",
           "underline",
@@ -49,9 +54,8 @@ export default {
               "hotkey.selectedItem",
               {
                 name: "Teste de comando",
-                render: core => {
+                render: () => {
                   document.execCommand("insertText", false, "@");
-                  core.exec("hotkey.onKeyup");
                 }
               }
             ],
@@ -59,6 +63,42 @@ export default {
           )
         ],
         placeholder: "Digite aqui...",
+        preview: {
+          onPaste: [
+            // links de pdf
+            (event, text) => {
+              if (/.pdf$/.test(text)) {
+                event.preventDefault();
+                let obj = document.createElement("object");
+                obj.data = text;
+                obj.width = "90%";
+                obj.height = "400px";
+                obj.type = "application/pdf";
+                document.execCommand("insertHTML", false, obj.outerHTML);
+                return true;
+              }
+            },
+            (event, text) => {
+              if (/sei.dnit.gov.br/.test(text)) {
+                event.preventDefault();
+
+                let iframe = document.createElement("iframe");
+                iframe.src = text;
+                iframe.width = "80%";
+                iframe.height = "400px";
+                document.execCommand("insertHTML", false, iframe.outerHTML);
+                return true;
+              }
+            },
+            (event, text) => {
+              if (/^<[\w|\W]*[-a-zA-Z0-9@:%._+~#=]*<\/[\w|\W]*>$/.test(text)) {
+                event.preventDefault();
+                document.execCommand("insertHTML", false, text);
+                return true;
+              }
+            }
+          ]
+        },
         hotkey: [
           {
             marker: "@",
@@ -76,6 +116,7 @@ export default {
                 raw: "@component(1)",
                 render: (core, createElement) => {
                   let target = createElement("div");
+
                   this.mountComponent(target);
                 }
               }
@@ -83,33 +124,30 @@ export default {
           },
           {
             marker: "/",
-            view: CustomViewHotkey,
             items: [
               {
                 name: "Teste de comando",
-                render: (core, createElement) => {
-                  createElement(null, document.createTextNode(""));
-                  core.exec("upload.new");
+                render: core => {
+                  document.execCommand("insertText", false, "@");
+                  core.exec("hotkey.onKeyup");
                 }
               },
               {
                 name: "Fake Data",
                 raw: "/component(1)",
                 render: (core, createElement) => {
-                  let target = createElement();
+                  let target = createElement("div");
+
                   this.mountComponent(target);
                 }
               }
             ]
           }
-        ]
-      };
-    }
-  },
-  data() {
-    return {
-      test: "abc",
-      data: null
+        ],
+        readOnly: {
+          active: true
+        }
+      }
     };
   },
   methods: {
@@ -144,3 +182,9 @@ export default {
   }
 };
 </script>
+
+<style>
+#app {
+  height: 100vh;
+}
+</style>

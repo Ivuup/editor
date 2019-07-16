@@ -8,6 +8,10 @@ export default class {
   plugins = {};
   editor;
   layout;
+  readOnly = {
+    status: false
+    // loadPlugins: []
+  };
   selection;
   enabledButtons = {};
   config;
@@ -27,8 +31,6 @@ export default class {
     this.editor = editor;
     this.layout = layout || Layout;
     this.editor.innerHTML = innerHTML ? innerHTML : "<p></p>";
-    this.editor.designMode = true;
-    this.editor.contentEditable = true;
     this._configurations(config);
     this.addPlugin(...plugins);
 
@@ -150,6 +152,9 @@ export default class {
   _configurations(config) {
     this.config = config;
 
+    // ativa ou desativa o editor
+    this.setReadOnly(config.readOnly ? config.readOnly.status : false);
+
     // configura a adição da ultima linha
     this.config.autoAddLine = this.config.autoAddLine || true;
 
@@ -175,5 +180,25 @@ export default class {
         !!this.editor.lastChild.data)
     )
       this.editor.append(document.createElement("p"));
+  }
+
+  setReadOnly(bool) {
+    this.readOnly.status = !!bool;
+    this.editor.designMode = !bool;
+    this.editor.contentEditable = !bool;
+
+    if (bool) {
+      this.editor.classList.remove("editable");
+      this.editor.classList.add("read-only");
+    } else {
+      this.editor.classList.remove("read-only");
+      this.editor.classList.add("editable");
+    }
+
+    // TODO: carregar apenas os plugins necessarios no momento
+    // if (this.readOnly.status && this._unloadedPlugins && this._unloadedPlugins.length > 0) {
+    //   this.addPlugin(...this._unloadedPlugins)
+    //   this._unloadedPlugins = []
+    // }
   }
 }

@@ -1,11 +1,14 @@
 <template>
   <div class="i-editor">
-    <div class="i-button-toolbar" v-if="core && core.config.buttonToolbar">
+    <div
+      class="i-button-toolbar"
+      v-if="core && !core.readOnly.status && core.config.buttonToolbar"
+    >
       <buttonToolbar :core="core" @command="command"></buttonToolbar>
     </div>
     <div class="wrap">
       <toolbar
-        v-if="core && core.config.toolbar"
+        v-if="core && !core.readOnly.status && core.config.toolbar"
         class="i-toolbar"
         :core="core"
         @command="command"
@@ -55,6 +58,9 @@ export default {
       this.core.inputCallback = (payload => this.$emit("input", payload)).bind(
         this
       );
+    },
+    "core.config.readOnly.active"(v) {
+      this.core.setReadOnly(v);
     }
   }
 };
