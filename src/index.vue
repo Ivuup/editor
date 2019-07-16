@@ -16,6 +16,7 @@ import Format from "./plugins/Format";
 import Hotkey from "./plugins/Hotkey";
 import Preview from "./plugins/Link/Preview";
 import ImageUpload from "./plugins/Image/Upload";
+import History from "./plugins/History";
 
 export default {
   components: {
@@ -42,12 +43,13 @@ export default {
       this.$nextTick().then(context => {
         context.core = new Core({
           editor: context.$refs.editor.$refs.content,
-          plugins: context.plugins || [
+          plugins: context.config.plugins || [
             Link,
             Hotkey,
             Preview,
             ...Format,
-            ImageUpload
+            ImageUpload,
+            History
           ],
           config: context.config || {
             toolbar: [

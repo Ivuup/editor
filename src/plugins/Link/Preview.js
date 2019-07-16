@@ -46,7 +46,6 @@ export default class Preview extends Plugin {
     let result = this.regex.exec(this.currentWord.word);
     if (!result) return;
 
-    // this.createAnchorLink(result);
     this.getLinkPreview(result[0]);
   }
 
@@ -57,18 +56,17 @@ export default class Preview extends Plugin {
    * @param {Element} target
    */
   getLinkPreview(url) {
-    this._httpRequest(
-      url,
-      response => {
-        response = JSON.parse(response);
-        if (response.images.length <= 0) return;
+    this.createAnchorLink(url);
+    this._httpRequest(url, response => {
+      response = JSON.parse(response);
+      if (response.images.length <= 0) return;
 
-        let preview = document.createElement("a");
-        preview.className = "link-preview";
-        preview.contentEditable = false;
-        preview.href = response.url;
-        preview.target = "_blank";
-        preview.innerHTML = `
+      let preview = document.createElement("a");
+      preview.className = "link-preview";
+      preview.contentEditable = false;
+      preview.href = response.url;
+      preview.target = "_blank";
+      preview.innerHTML = `
           <div class="wrap">
             <img src="${response.images[0]}" class="preview-image" />
             <div>
@@ -77,16 +75,12 @@ export default class Preview extends Plugin {
             </div>
           </div>
         `;
-        document.execCommand(
-          "insertHTML",
-          false,
-          `<div>${preview.outerHTML}</div>`
-        );
-      },
-      () => {
-        document.execCommand("createLink", false, url);
-      }
-    );
+      document.execCommand(
+        "insertHTML",
+        false,
+        `<div>${preview.outerHTML}</div>`
+      );
+    });
     this.lastText = null;
   }
 
@@ -106,19 +100,24 @@ export default class Preview extends Plugin {
     http.onreadystatechange = function() {
       if (http.readyState === 4 && http.status === 200) {
         success(http.responseText);
+        return;
       }
-      if (http.readyState === 4 && http.status === 500) {
-        error();
-      }
+    };
+    http.onerror = () => {
+      error();
     };
     http.send(params);
   }
 
-  createAnchorLink(match) {
+  createAnchorLink(url) {
+    if (!(this.currentWord.node instanceof Node)) {
+      document.execCommand("createLink", false, url);
+      return;
+    }
     // adicionando o texto antes da hotkey
-    if (match.index > 0) {
+    if (this.currentWord.start > 0) {
       let start = document.createTextNode(
-        this.currentWord.node.data.slice(0, match.index)
+        this.currentWord.node.data.slice(0, this.currentWord.start)
       );
       this.currentWord.node.parentNode.insertBefore(
         start,
@@ -126,16 +125,16 @@ export default class Preview extends Plugin {
       );
     }
     let a = document.createElement("a");
-    a.href = match[0];
+    a.href = this.currentWord.word;
     a.target = "_blank";
-    a.innerText = match[0];
+    a.innerText = this.currentWord.word;
 
     this.currentWord.node.parentNode.insertBefore(a, this.currentWord.node);
 
     this.currentWord.node.data = this.currentWord.node.data.slice(
-      match.index + match[0].length
+      this.currentWord.end + 1
     );
 
-    document.execCommand("insertText", false, " ");
+    window.getSelection().setPosition(a.nextSibling, 1);
   }
 }
