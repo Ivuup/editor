@@ -1,5 +1,6 @@
 import Plugin from "../../contracts/Plugin";
 import View from "./ui";
+import { Command } from "./domain/Command";
 
 // TODO: Implementar
 export default class Hotkey extends Plugin {
@@ -8,10 +9,11 @@ export default class Hotkey extends Plugin {
   // regexMarkers
   regex;
   regexWord;
-  current;
+  current = new Command();
   currentList;
   currentIndex = {
     start: null,
+    node: null,
     end: null
   };
 
@@ -19,9 +21,12 @@ export default class Hotkey extends Plugin {
     super(core);
     // preparar regex de acordo com os marcadores
     let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
-    this.regex = new RegExp(`${markers}[\\w]*`);
-
-    this.regexWord = new RegExp(`^${markers}[\\w]*`);
+    // /[@]\S*(?:\([\w|\W]*(?:\))|\S*(?:\([\w|\W]*))|\S*/
+    this.regex = new RegExp(
+      `${markers}(?:\\S*(?:\\([\\w|\\W]*(?:\\))|\\S*(?:\\([\\w|\\W]*))|\\S*)`,
+      "g"
+    );
+    this.regexWord = new RegExp(`^${markers}[\\w]*[\\)]?`);
     // varrer o conteúdo e renderizar os componentes
     this.loadComponents();
   }
@@ -31,50 +36,59 @@ export default class Hotkey extends Plugin {
   }
 
   onKeyup() {
-    this.core._floatAction.value = false;
     // verifica se existe um marcador
-    if (!this.regex.test(this.core.selection.focusNode.data)) return;
+    let matches = this.core.selection.focusNode.data.matchAll(this.regex);
+    let match = matches.next();
 
-    let words = this.core.selection.focusNode.data.split(" ");
-    let count = 0;
-    let wordsIndex = words.map(w => {
-      return {
-        start: count,
-        end: (() => {
-          let tmp = count + w.trim().length - 1;
-          count += w.length + 1;
-          return tmp;
-        })()
-      };
-    });
-    // pegando o marcador atual
-    this.current = words.find((w, i) => {
+    this.currentIndex = {};
+    this.current.fill("");
+    while (!match.done) {
       if (
-        wordsIndex[i].start <= this.core.selection.focusOffset - 1 &&
-        wordsIndex[i].end >= this.core.selection.focusOffset - 1
+        match.value.index <= this.core.selection.focusOffset &&
+        match.value.index + match.value[0].length >=
+          this.core.selection.focusOffset
       ) {
         // salvando a posicao do marcador
         this.currentIndex = {
-          start: wordsIndex[i].start,
-          end: wordsIndex[i].end
+          start: match.value.index,
+          node: this.core.selection.focusNode,
+          end: match.value.index + match.value[0].length
         };
-        return true;
+        this.current.fill(match.value[0]);
+        break;
       }
-    });
+      match = matches.next();
+    }
 
-    if (!this.regexWord.test(this.current)) return;
+    if (!this.regexWord.test(this.current.raw))
+      return (this.core._floatAction.value = false);
+    this.core._floatAction.value = true;
 
     // pegar o marcador correto
-    let marker = this._getMarker(this.current);
+    let marker = this._getMarker(this.current.raw);
 
     // pesquisar lista
-    const exp = new RegExp(this.current.slice(1).trim(), "i");
-    this.currentList = marker.items
-      .filter(i => exp.test(i.name) || exp.test(i.raw))
-      .sort(a => {
-        const test = (a.name + a.raw).match(exp);
-        return test ? -test.length : 1;
-      });
+    if (
+      !marker.typing ||
+      !Object.keys(marker.typing)
+        .filter(i => i == this.current.hotkey || i == this.current.name)
+        .some(i => {
+          let r = marker.typing[i]({
+            command: this.current,
+            marker,
+            hotkey: this
+          });
+          return typeof r == "function" ? r(...this.current.params) : r;
+        })
+    ) {
+      const exp = new RegExp(this.current.raw.slice(1).trim(), "i");
+      this.currentList = marker.items
+        .filter(i => exp.test(i.name) || exp.test(i.raw))
+        .sort(a => {
+          const test = (a.name + a.raw).match(exp);
+          return test ? -test.length : 1;
+        });
+    }
 
     // renderizar layout e abrir menu
     this.core._floatAction.component = marker.view || View;
@@ -175,6 +189,21 @@ export default class Hotkey extends Plugin {
       if (!element.dataset.item) return;
       // pega o marcador
       let item = this._getMarker(element.dataset.item);
+
+      // roda funcao antes de tentar renderizar
+      let command = new Command(element.dataset.item);
+      if (item.beforeRender)
+        Object.keys(item.beforeRender)
+          .filter(i => i == command.hotkey || i == command.name)
+          .some(i => {
+            let r = item.beforeRender[i]({
+              command: command,
+              marker: item,
+              hotkey: this
+            });
+            return typeof r == "function" ? r(...command.params) : r;
+          });
+
       if (!item || !item.items) return;
       // pega o item
       item = item.items.find(i => i.raw == element.dataset.item);
@@ -190,7 +219,7 @@ export default class Hotkey extends Plugin {
   }
 
   /**
-   * Altera um lista de items de um marcador
+   * Altera uma lista de items de um marcador
    *
    * @param {Element} editor
    * @param {String} marker
