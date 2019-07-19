@@ -23,9 +23,10 @@ export default class Hotkey extends Plugin {
     let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
     // /[@]\S*(?:\([\w|\W]*(?:\))|\S*(?:\([\w|\W]*))|\S*/
     this.regex = new RegExp(
-      `${markers}(?:\\S*(?:\\([\\w|\\W]*(?:\\))|\\S*(?:\\([\\w|\\W]*))|\\S*)`,
+      `(?:(?<=\\s)|^)${markers}(?:\\S*(?:\\([\\w|\\W]*(?:\\))|\\S*(?:\\([\\w|\\W]*))|\\S*)`,
       "g"
     );
+
     this.regexWord = new RegExp(`^${markers}[\\w]*[\\)]?`);
     // varrer o conteúdo e renderizar os componentes
     this.loadComponents();
@@ -190,38 +191,41 @@ export default class Hotkey extends Plugin {
    *
    * TODO: rodar essa funcao quando ocorrer alteracao na lista
    */
-  loadComponents() {
-    this.core.editor.querySelectorAll(".hotkey").forEach(element => {
-      if (!element.dataset.item) return;
+  async loadComponents() {
+    let hotkeys = this.core.editor.querySelectorAll(".hotkey");
+    for (let i = 0; i < hotkeys.length; i++) {
+      if (!hotkeys[i].dataset.item) return;
       // pega o marcador
-      let item = this._getMarker(element.dataset.item);
+      let item = this._getMarker(hotkeys[i].dataset.item);
 
       // roda funcao antes de tentar renderizar
-      let command = new Command(element.dataset.item);
-      if (item.beforeRender)
-        Object.keys(item.beforeRender)
-          .filter(i => i == command.hotkey || i == command.name)
-          .some(i => {
-            let r = item.beforeRender[i]({
-              command: command,
-              marker: item,
-              hotkey: this
-            });
-            return typeof r == "function" ? r(...command.params) : r;
+      let command = new Command(hotkeys[i].dataset.item);
+      if (item.beforeRender) {
+        let toRun = Object.keys(item.beforeRender).filter(
+          i => i == command.hotkey || i == command.name
+        );
+        for (let tr = 0; tr < toRun.length; tr++) {
+          let r = item.beforeRender[toRun[tr]]({
+            command: command,
+            marker: item,
+            hotkey: this
           });
+          await (typeof r == "function" ? r(...command.params) : r);
+        }
+      }
 
-      if (!item || !item.items) return;
-      // pega o item
-      item = item.items.find(i => i.raw == element.dataset.item);
       if (!item) return;
-      element.innerHTML = null;
+      // pega o item
+      item = item.items.find(item => item.raw == hotkeys[i].dataset.item);
+      if (!item) return;
+      hotkeys[i].innerHTML = null;
       // executando acao da hotkey
       let result = item.render(this.core, () =>
-        element.appendChild(document.createElement("span"))
+        hotkeys[i].appendChild(document.createElement("span"))
       );
       if (!result) return;
-      if (typeof result == "string") element.innerHTML = result;
-    });
+      if (typeof result == "string") hotkeys[i].innerHTML = result;
+    }
   }
 
   /**
