@@ -3,8 +3,8 @@
     ref="floatAction"
     attach
     absolute
-    min-width="100%"
-    :style="`width: 100%; position: absolute; top: ${y}px`"
+    max-width="100%"
+    :style="`width: 100%; position: absolute; top: ${y}px; left: ${x}px`"
     :value="core._floatAction.value"
   >
     <div
@@ -19,7 +19,8 @@
 export default {
   data() {
     return {
-      y: 0
+      y: 0,
+      x: 0
     };
   },
   props: {
@@ -33,9 +34,23 @@ export default {
   },
   watch: {
     "core.selection"(v) {
-      let node =
-        v.focusNode.nodeName != "P" ? v.focusNode.parentNode : v.focusNode;
-      this.y = node.offsetTop + node.clientHeight - node.parentNode.scrollTop;
+      if (v.focusNode.nodeName == "P") return;
+      let maxX =
+        v.focusNode.parentElement.clientWidth -
+        this.$refs.floatAction.$refs.content.clientWidth;
+      maxX = maxX < 0 ? 0 : maxX;
+      this.y =
+        v.focusNode.parentElement.offsetTop +
+        v.focusNode.parentElement.clientHeight -
+        v.focusNode.parentElement.parentNode.scrollTop;
+      let x =
+        v.getRangeAt(0).getBoundingClientRect().x -
+        this.core.editor.getBoundingClientRect().x;
+      x = x > maxX ? maxX : x;
+
+      if (x < 0) return;
+
+      this.x = x;
     }
   }
 };

@@ -35,7 +35,13 @@ export default class Hotkey extends Plugin {
     this._checkActions(event);
   }
 
-  onKeyup() {
+  onKeyup(event) {
+    if (
+      this.core.selection.focusNode.nodeName != "#text" ||
+      event.key == "Escape"
+    )
+      return;
+
     // verifica se existe um marcador
     let matches = this.core.selection.focusNode.data.matchAll(this.regex);
     let match = matches.next();
