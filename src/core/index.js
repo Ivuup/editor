@@ -155,6 +155,9 @@ export default class {
     // ativa ou desativa o editor
     this.setReadOnly(config.readOnly ? config.readOnly.status : false);
 
+    // configura a adição da ultima linha
+    this.config.autoAddLine = this.config.autoAddLine || true;
+
     this._floatAction = { value: false };
     // atribui foco ao editor ao iniciar
     if (this.config.autofocus) {
