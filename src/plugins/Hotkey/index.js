@@ -23,7 +23,7 @@ export default class Hotkey extends Plugin {
     let markers = `[${this.core.config.hotkey.map(m => m.marker).join("|")}]`;
     // /[@]\S*(?:\([\w|\W]*(?:\))|\S*(?:\([\w|\W]*))|\S*/
     this.regex = new RegExp(
-      `(?:(?<=\\s)|^)${markers}(?:\\S*(?:\\([\\w|\\W]*(?:\\))|\\S*(?:\\([\\w|\\W]*))|\\S*)`,
+      `(?!\\b)${markers}(?:\\S*(?:\\([\\w|\\W]*(?:\\))|\\S*(?:\\([\\w|\\W]*))|\\S*)`,
       "g"
     );
 
@@ -193,8 +193,9 @@ export default class Hotkey extends Plugin {
    */
   async loadComponents() {
     let hotkeys = this.core.editor.querySelectorAll(".hotkey");
+
     for (let i = 0; i < hotkeys.length; i++) {
-      if (!hotkeys[i].dataset.item) return;
+      if (!hotkeys[i].dataset.item) continue;
       // pega o marcador
       let item = this._getMarker(hotkeys[i].dataset.item);
 
@@ -214,16 +215,16 @@ export default class Hotkey extends Plugin {
         }
       }
 
-      if (!item) return;
+      if (!item) continue;
       // pega o item
       item = item.items.find(item => item.raw == hotkeys[i].dataset.item);
-      if (!item) return;
+      if (!item) continue;
       hotkeys[i].innerHTML = null;
       // executando acao da hotkey
       let result = item.render(this.core, () =>
         hotkeys[i].appendChild(document.createElement("span"))
       );
-      if (!result) return;
+      if (!result) continue;
       if (typeof result == "string") hotkeys[i].innerHTML = result;
     }
   }
