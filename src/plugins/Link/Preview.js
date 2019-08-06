@@ -26,6 +26,7 @@ export default class Preview extends Plugin {
     )
       return;
     else if (this.regex.test(text)) {
+      this.currentWord.node = undefined;
       this.getLinkPreview(
         this.regex.exec(text)[0],
         this.core.selection.focusNode
@@ -61,7 +62,8 @@ export default class Preview extends Plugin {
    * @param {Element} target
    */
   getLinkPreview(url) {
-    this.createAnchorLink(url);
+    if (!this.createAnchorLink(url)) return false;
+
     this._httpRequest(url, response => {
       response = JSON.parse(response);
       if (response.images.length <= 0) return;
@@ -122,8 +124,9 @@ export default class Preview extends Plugin {
     if (!(this.currentWord.node instanceof Node)) {
       url = /^http/.test(url) ? url : "https://" + url;
       document.execCommand("createLink", false, url);
-      return;
+      return true;
     }
+    if (this.currentWord.node.parentNode.nodeName == "A") return false;
     // adicionando o texto antes da hotkey
     if (this.currentWord.start > 0) {
       let start = document.createTextNode(
@@ -148,5 +151,7 @@ export default class Preview extends Plugin {
     );
 
     window.getSelection().setPosition(a.nextSibling, a.nextSibling.length);
+
+    return true;
   }
 }
