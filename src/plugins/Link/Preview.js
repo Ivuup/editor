@@ -2,7 +2,7 @@ import Plugin from "../../contracts/Plugin";
 
 export default class Preview extends Plugin {
   prefix = "preview";
-  regex = /^[https?://|(www.)]*[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)$/;
+  regex = /^[https?://|(www.)]*[-a-zA-Z0-9:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9:%_+.~#?&//=]*)$/;
   apiUrl = "https://linkpreview-api.herokuapp.com/";
   response;
   currentWord;
