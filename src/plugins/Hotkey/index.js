@@ -91,7 +91,7 @@ export default class Hotkey extends Plugin {
     ) {
       const exp = new RegExp(this.current._raw.slice(1).trim(), "i");
       this.currentList = marker.items
-        .filter(i => exp.test(i.name) || exp.test(i.raw))
+        .filter(i => !i.hide && (exp.test(i.name) || exp.test(i.raw)))
         .sort(a => {
           const test = (a.name + a.raw).match(exp);
           return test ? -test.length : 1;
