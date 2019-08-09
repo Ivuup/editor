@@ -15,8 +15,8 @@
       ></toolbar>
       <div class="i-content" ref="content"></div>
       <float-action
+        v-if="core && !core.readOnly.status"
         class="i-float-action"
-        v-if="core"
         :core="core"
       ></float-action>
     </div>

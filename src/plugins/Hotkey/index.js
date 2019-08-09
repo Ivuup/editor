@@ -39,7 +39,8 @@ export default class Hotkey extends Plugin {
   onKeyup(event) {
     if (
       this.core.selection.focusNode.nodeName != "#text" ||
-      event.key == "Escape"
+      event.key == "Escape" ||
+      this.core.readOnly.active
     )
       return;
 
@@ -67,12 +68,12 @@ export default class Hotkey extends Plugin {
       match = matches.next();
     }
 
-    if (!this.regexWord.test(this.current.raw))
+    if (!this.regexWord.test(this.current._raw))
       return (this.core._floatAction.value = false);
     this.core._floatAction.value = true;
 
     // pegar o marcador correto
-    let marker = this._getMarker(this.current.raw);
+    let marker = this._getMarker(this.current._raw);
 
     // pesquisar lista
     if (
@@ -88,7 +89,7 @@ export default class Hotkey extends Plugin {
           return typeof r == "function" ? r(...this.current.params) : r;
         })
     ) {
-      const exp = new RegExp(this.current.raw.slice(1).trim(), "i");
+      const exp = new RegExp(this.current._raw.slice(1).trim(), "i");
       this.currentList = marker.items
         .filter(i => exp.test(i.name) || exp.test(i.raw))
         .sort(a => {
