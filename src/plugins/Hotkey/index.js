@@ -16,6 +16,7 @@ export default class Hotkey extends Plugin {
     node: null,
     end: null
   };
+  _loadedComponents = [];
 
   constructor(core) {
     super(core);
@@ -29,7 +30,9 @@ export default class Hotkey extends Plugin {
 
     this.regexWord = new RegExp(`^${markers}[\\w]*[\\)]?`);
     // varrer o conteúdo e renderizar os componentes
-    this.loadComponents();
+    setTimeout(() => {
+      this.loadComponents();
+    }, 500);
   }
 
   onKeydown(event) {
@@ -196,7 +199,11 @@ export default class Hotkey extends Plugin {
     let hotkeys = this.core.editor.querySelectorAll(".hotkey");
 
     for (let i = 0; i < hotkeys.length; i++) {
-      if (!hotkeys[i].dataset.item) continue;
+      if (
+        this._loadedComponents.includes(hotkeys[i]) ||
+        !hotkeys[i].dataset.item
+      )
+        continue;
       // pega o marcador
       let item = this._getMarker(hotkeys[i].dataset.item);
 
@@ -227,6 +234,8 @@ export default class Hotkey extends Plugin {
       );
       if (!result) continue;
       if (typeof result == "string") hotkeys[i].innerHTML = result;
+
+      this._loadedComponents.push(hotkeys[i]);
     }
   }
 
