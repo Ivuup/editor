@@ -40,6 +40,7 @@ export default class Hotkey extends Plugin {
   }
 
   onKeyup(event) {
+    this.core._floatAction.value = false;
     if (
       this.core.selection.focusNode.nodeName != "#text" ||
       event.key == "Escape" ||
@@ -188,6 +189,7 @@ export default class Hotkey extends Plugin {
     item.render(this.core, createElement);
 
     this.core.editor.dispatchEvent(new Event("input"));
+    this.core.editor.dispatchEvent(new Event("click"));
   }
 
   /**

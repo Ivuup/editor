@@ -1,12 +1,5 @@
 <template>
-  <v-menu
-    ref="floatAction"
-    attach
-    absolute
-    max-width="100%"
-    :style="`width: 100%; position: absolute; top: ${y}px; left: ${x}px`"
-    :value="core._floatAction.value"
-  >
+  <v-menu ref="floatAction" attach="body" :value="core._floatAction.value">
     <div
       v-if="core._floatAction.component"
       :is="core._floatAction.component"
@@ -31,26 +24,50 @@ export default {
   },
   mounted() {
     this.core._floatAction.menu = this.$refs.floatAction;
+    this.$refs.floatAction.$refs.content.style.position = "fixed";
   },
   watch: {
     "core.selection"(v) {
-      if (v.focusNode.nodeName == "P") return;
+      if (v.focusNode.nodeName !== "#text") return;
+      this.calcDimensions();
+    },
+    "core._floatAction.value"(v) {
+      if (!v) return;
+      this.calcDimensions();
+    }
+  },
+  methods: {
+    calcDimensions() {
+      if (!this.core._floatAction.value) return;
+
+      this.y =
+        this.core.selection.getRangeAt(0).getBoundingClientRect().y +
+        this.core.selection.getRangeAt(0).getBoundingClientRect().height;
       let maxX =
-        v.focusNode.parentElement.clientWidth -
+        this.core.editor.getBoundingClientRect().width +
+        this.core.editor.getBoundingClientRect().x -
         this.$refs.floatAction.$refs.content.clientWidth;
       maxX = maxX < 0 ? 0 : maxX;
-      this.y =
-        v.focusNode.parentElement.offsetTop +
-        v.focusNode.parentElement.clientHeight -
-        v.focusNode.parentElement.parentNode.scrollTop;
-      let x =
-        v.getRangeAt(0).getBoundingClientRect().x -
-        this.core.editor.getBoundingClientRect().x;
+      if (
+        this.y + this.$refs.floatAction.$refs.content.clientHeight >
+        window.innerHeight
+      )
+        this.y =
+          this.core.selection.getRangeAt(0).getBoundingClientRect().y -
+          this.$refs.floatAction.$refs.content.clientHeight;
+
+      let x = this.core.selection.getRangeAt(0).getBoundingClientRect().x;
       x = x > maxX ? maxX : x;
 
       if (x < 0) return;
 
       this.x = x;
+
+      this.$refs.floatAction.$refs.content.style.top = `${this.y}px`;
+      this.$refs.floatAction.$refs.content.style.left = `${this.x}px`;
+    },
+    test() {
+      console.log("test");
     }
   }
 };
