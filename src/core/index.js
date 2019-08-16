@@ -62,6 +62,7 @@ export default class {
   }
 
   _handleKeydown(event) {
+    this._checkDeleteEvents(event);
     this._helpers.currentWord = currentWord();
 
     this.selection = null;
@@ -80,6 +81,8 @@ export default class {
   }
 
   _handleInput(event) {
+    this._checkSelection(event);
+
     if (this._editing == null) this.editingCallback(true);
 
     if (this._editing) clearTimeout(this._editing);
@@ -97,10 +100,6 @@ export default class {
   }
 
   _handleClickAndKeyup(event) {
-    if (!this.editor.innerHTML)
-      this.editor.innerHTML = `<p placeholder="${
-        this.config.placeholder
-      }"></p>`;
     this.selection = null;
     this.selection = window.getSelection();
 
@@ -201,5 +200,72 @@ export default class {
     //   this.addPlugin(...this._unloadedPlugins)
     //   this._unloadedPlugins = []
     // }
+  }
+
+  _checkDeleteEvents(event) {
+    // verifica se é uma tecla de exclusão
+    if (!event.key || !["Backspace", "Delete"].includes(event.key)) return;
+
+    let selection = window.getSelection();
+    let toRemove = null;
+
+    // pega o elemento a ser removido caso a posicao esteja no final e use delete
+    if (
+      (selection.focusOffset === selection.focusNode.length ||
+        selection.focusNode.length == undefined) &&
+      event.key === "Delete"
+    ) {
+      let children = Array.from(
+        selection.focusNode.parentElement.childNodes
+      ).filter(c => c.nodeName == "#text");
+      if (
+        !(selection.focusNode instanceof Element) &&
+        children.indexOf(selection.focusNode) === children.length - 1
+      )
+        toRemove = selection.focusNode.parentElement.nextSibling
+          ? selection.focusNode.parentElement.nextSibling.firstChild
+          : null;
+      else
+        toRemove = selection.focusNode.nextSibling
+          ? selection.focusNode.nextSibling.firstChild
+          : selection.focusNode.parentElement.nextSibling;
+    }
+
+    // pega o elemento a ser removido caso a posicao esteja no inicio e use backspace
+    else if (selection.focusOffset === 0 && event.key === "Backspace")
+      toRemove = selection.focusNode.previousElementSibling;
+
+    // retorna sem remover caso nao esteja declarado ou fora do editor
+    if (
+      !toRemove ||
+      !this.editor.contains(toRemove) ||
+      toRemove.isContentEditable ||
+      !(toRemove instanceof Element)
+    )
+      return;
+
+    // previne o evento e remove elemento
+    event.preventDefault();
+    toRemove.remove();
+  }
+
+  _checkSelection(event) {
+    if (
+      window.getSelection().focusNode.parentElement !== this.editor ||
+      event.inputType !== "insertText"
+    )
+      return;
+
+    let p = document.createElement("p");
+    this.editor.insertBefore(p, window.getSelection().focusNode);
+    p.append(window.getSelection().focusNode);
+
+    let range = new Range();
+    range.selectNode(p.firstChild);
+    range.setStart(p.firstChild, p.firstChild.length);
+    range.collapse(true);
+
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
   }
 }
