@@ -40,6 +40,10 @@ export default class {
     this.editor.addEventListener("input", this._handleInput.bind(this));
     this.editor.addEventListener("paste", this._handlePaste.bind(this));
     this.editor.addEventListener("blur", this._handleBlur.bind(this));
+
+    setTimeout(() => {
+      this._handleLoaded();
+    }, 1);
   }
 
   /**
@@ -77,6 +81,12 @@ export default class {
   _handlePaste(event) {
     Object.keys(this.plugins).forEach(plugin =>
       this.plugins[plugin].onPaste ? this.plugins[plugin].onPaste(event) : null
+    );
+  }
+
+  _handleLoaded() {
+    Object.keys(this.plugins).forEach(plugin =>
+      this.plugins[plugin].loaded ? this.plugins[plugin].loaded() : null
     );
   }
 

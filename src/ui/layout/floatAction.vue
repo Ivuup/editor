@@ -65,9 +65,6 @@ export default {
 
       this.$refs.floatAction.$refs.content.style.top = `${this.y}px`;
       this.$refs.floatAction.$refs.content.style.left = `${this.x}px`;
-    },
-    test() {
-      console.log("test");
     }
   }
 };

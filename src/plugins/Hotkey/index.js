@@ -30,11 +30,11 @@ export default class Hotkey extends Plugin {
 
     this.regexWord = new RegExp(`^${markers}[\\w]*[\\)]?`);
     // varrer o conteúdo e renderizar os componentes
-    setTimeout(() => {
-      this.loadComponents();
-    }, 500);
   }
-
+  loaded() {
+    // varrer o conteúdo e renderizar os componentes
+    this.loadComponents();
+  }
   onKeydown(event) {
     this._checkActions(event);
   }
@@ -188,8 +188,10 @@ export default class Hotkey extends Plugin {
     // executando acao da hotkey
     item.render(this.core, createElement);
 
-    this.core.editor.dispatchEvent(new Event("input"));
-    this.core.editor.dispatchEvent(new Event("click"));
+    setTimeout(() => {
+      this.core.editor.dispatchEvent(new Event("input"));
+      this.core.editor.dispatchEvent(new Event("click"));
+    }, 1);
   }
 
   /**
