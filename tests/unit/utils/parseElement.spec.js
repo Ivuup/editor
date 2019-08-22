@@ -54,7 +54,7 @@ describe("ParseElement", () => {
 
 const element1 =
   "<h1>The title</h1>" +
-  "<p>an text here</p>" +
+  '<p class="abc" data-item="test">an text here</p>' +
   '<p>an another <a href="#">text</a> <span>here</span></p>' +
   "<p>an another <b>text</b> <span>here</span></p>";
 

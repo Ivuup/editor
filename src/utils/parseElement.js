@@ -38,6 +38,12 @@ const parse = (before, after) => {
       before.removeChild(child);
     });
 
+  if (
+    before.outerHTML.replace(before.innerHTML, "") !==
+    after.outerHTML.replace(after.innerHTML, "")
+  )
+    before.outerHTML = after.outerHTML;
+
   return before;
 };
 

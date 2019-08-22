@@ -179,7 +179,9 @@ export default class {
   }
 
   setContent(content) {
-    parserElement(this.editor, content);
+    let clone = this.editor.cloneNode();
+    clone.innerHTML = content;
+    parserElement(this.editor, clone);
   }
 
   _addLine() {
