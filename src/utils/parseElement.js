@@ -28,7 +28,7 @@ const parse = (before, after) => {
       return change(before.childNodes[i], child);
 
     // caso contrário, verique o filho
-    parse(before.childNodes[i], child);
+    parse(before.childNodes[i], child.innerHTML);
   });
 
   // removendo index inexistentes
