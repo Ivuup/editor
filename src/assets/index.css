@@ -13,7 +13,7 @@
   border-radius: 5px;
   overflow: auto;
 }
-.i-content p:only-child:empty:before {
+.i-content:not(.read-only):empty:not(:focus):before {
   content: attr(placeholder);
   color: #a1a1a1; 
 }
@@ -42,6 +42,9 @@
   height: auto;
   width: 100%;
   position: relative;
+}
+.i-editor:not(.read-only) > .wrap {
+  width: calc(100% - 50px);
 }
 
 /* Link preview */

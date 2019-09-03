@@ -73,7 +73,7 @@ export default class Preview extends Plugin {
       let preview = document.createElement("a");
       preview.className = "link-preview";
       preview.contentEditable = false;
-      preview.href = response.url;
+      preview.href = url;
       preview.target = "_blank";
       preview.innerHTML = `
           <div class="wrap">

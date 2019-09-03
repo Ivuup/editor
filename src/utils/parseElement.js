@@ -2,7 +2,7 @@ export default (before, after) => parse(before, after);
 
 const parse = (before, after) => {
   before = prepareElement(before);
-  after = prepareElement(after);
+  after = prepareElement(after || "<div></div>");
 
   if (after.nodeName == "#text") return change(before, after);
 

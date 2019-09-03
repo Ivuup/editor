@@ -54,11 +54,19 @@ export default class Upload extends Plugin {
     for (let i = 0; i < files.length; i++) {
       let reader = new FileReader();
       reader.onloadend = () => {
-        const width = this.core.config.upload.width || 'unset'
-        const asLink = this.core.config.upload.asLink
-        const html = asLink 
-            ? `<a href="${reader.result}" download="${files[0].name}"><img src="${reader.result}" width="${width}" /></a>`
-            : `<img src="${reader.result}" width="${width}" />`
+        const width =
+          this.core.config.upload && this.core.config.upload.width
+            ? this.core.config.upload.width
+            : "unset";
+        const asLink =
+          this.core.config.upload && this.core.config.upload.asLink
+            ? this.core.config.upload.asLink
+            : undefined;
+        const html = asLink
+          ? `<a href="${reader.result}" download="${files[0].name}"><img src="${
+              reader.result
+            }" width="${width}" /></a>`
+          : `<img src="${reader.result}" width="${width}" />`;
         document.execCommand("insertHTML", false, html);
       };
       reader.readAsDataURL(

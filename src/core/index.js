@@ -30,7 +30,7 @@ export default class {
   constructor({ editor, layout, innerHTML, plugins, config }) {
     this.editor = editor;
     this.layout = layout || Layout;
-    this.editor.innerHTML = innerHTML ? innerHTML : "<p></p>";
+    this.editor.innerHTML = innerHTML;
     this._configurations(config);
     this.addPlugin(...plugins);
 
@@ -174,8 +174,7 @@ export default class {
       this.editor.focus();
     }
     // mostra texto caso o editor esteja vazio
-    if (this.editor.children[0])
-      this.editor.children[0].setAttribute("placeholder", config.placeholder);
+    this.editor.setAttribute("placeholder", config.placeholder);
   }
 
   setContent(content) {
@@ -264,7 +263,8 @@ export default class {
   _checkSelection(event) {
     if (
       window.getSelection().focusNode.parentElement !== this.editor ||
-      event.inputType !== "insertText"
+      event.inputType !== "insertText" ||
+      event.data == null
     )
       return;
 
