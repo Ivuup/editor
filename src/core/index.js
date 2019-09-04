@@ -1,13 +1,14 @@
+import { DiffDOM } from "diff-dom";
 import Layout from "../ui/layout";
 import Plugin from "../contracts/Plugin";
 import Button from "../contracts/Button";
-import parserElement from "../utils/parseElement";
 import currentWord from "../utils/currentWord";
 
 export default class {
   plugins = {};
   editor;
   layout;
+  dd;
   readOnly = {
     status: false
     // loadPlugins: []
@@ -30,7 +31,9 @@ export default class {
   constructor({ editor, layout, innerHTML, plugins, config }) {
     this.editor = editor;
     this.layout = layout || Layout;
-    this.editor.innerHTML = innerHTML;
+    this.dd = new DiffDOM();
+    this.setContent(innerHTML);
+
     this._configurations(config);
     this.addPlugin(...plugins);
 
@@ -180,7 +183,8 @@ export default class {
   setContent(content) {
     let clone = this.editor.cloneNode();
     clone.innerHTML = content;
-    parserElement(this.editor, clone);
+
+    this.dd.apply(this.editor, this.dd.diff(this.editor, clone));
   }
 
   _addLine() {
