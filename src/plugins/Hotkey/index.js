@@ -40,36 +40,36 @@ export default class Hotkey extends Plugin {
   }
 
   onKeyup(event) {
-    this.core._floatAction.value = false;
     if (
       this.core.selection.focusNode.nodeName != "#text" ||
       event.key == "Escape" ||
-      this.core.readOnly.active
+      this.core.readOnly.active ||
+      !this.core.selection.focusNode.data
     )
       return;
 
     // verifica se existe um marcador
-    let matches = this.core.selection.focusNode.data.matchAll(this.regex);
-    let match = matches.next();
+    this.regex.lastIndex = 0;
+    let match = this.regex.exec(this.core.selection.focusNode.data);
 
     this.currentIndex = {};
     this.current.fill("");
-    while (!match.done) {
+
+    while (match) {
       if (
-        match.value.index <= this.core.selection.focusOffset &&
-        match.value.index + match.value[0].length >=
-          this.core.selection.focusOffset
+        match.index < this.core.selection.focusOffset &&
+        match.index + match[0].length >= this.core.selection.focusOffset
       ) {
         // salvando a posicao do marcador
         this.currentIndex = {
-          start: match.value.index,
+          start: match.index,
           node: this.core.selection.focusNode,
-          end: match.value.index + match.value[0].length
+          end: match.index + match[0].length
         };
-        this.current.fill(match.value[0]);
+        this.current.fill(match[0]);
         break;
       }
-      match = matches.next();
+      match = this.regex.exec(this.core.selection.focusNode.data);
     }
 
     if (!this.regexWord.test(this.current._raw))

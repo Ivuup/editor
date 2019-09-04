@@ -32,6 +32,7 @@ export default {
       this.calcDimensions();
     },
     "core._floatAction.value"(v) {
+      this.$refs.floatAction.active = v;
       if (!v) return;
       this.calcDimensions();
     }

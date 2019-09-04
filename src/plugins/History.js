@@ -46,7 +46,6 @@ export default class History extends Plugin {
     if (this.index <= 0 || this.state[--this.index] == undefined) return;
 
     this._change();
-    console.log(event);
   }
 
   _redo(event) {

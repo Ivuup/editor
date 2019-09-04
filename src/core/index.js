@@ -246,6 +246,7 @@ export default class {
     else if (selection.focusOffset === 0 && event.key === "Backspace")
       toRemove = selection.focusNode.previousElementSibling;
 
+    toRemove = this._getFirstEditableIfExists(toRemove);
     // retorna sem remover caso nao esteja declarado ou fora do editor
     if (
       !toRemove ||
@@ -279,5 +280,17 @@ export default class {
 
     window.getSelection().removeAllRanges();
     window.getSelection().addRange(range);
+  }
+
+  _getFirstEditableIfExists(element) {
+    if (
+      !element ||
+      element.isContentEditable ||
+      !element.parentElement ||
+      element.parentElement.isContentEditable
+    )
+      return element;
+
+    return this._getFirstEditableIfExists(element.parentElement);
   }
 }
