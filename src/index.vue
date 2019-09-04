@@ -74,7 +74,7 @@ export default {
   },
   watch: {
     value(v) {
-      if (v && v !== this.core.editor.innerHTML) this.core.setContent(v);
+      if (v !== this.core.editor.innerHTML) this.core.setContent(v);
     }
   }
 };
