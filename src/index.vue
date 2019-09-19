@@ -29,10 +29,23 @@ export default {
   },
   props: {
     plugins: {
-      type: Array
+      type: Array,
+      default: () => [Link, Hotkey, Preview, ...Format, ImageUpload, History]
     },
     config: {
-      type: Object
+      type: Object,
+      default: () => ({
+        toolbar: [
+          "alignment",
+          "bold",
+          "italic",
+          "underline",
+          "removeFormat",
+          "horizontalRule"
+        ],
+        buttonToolbar: ["link", "uploadImage"],
+        placeholder: "Digite aqui..."
+      })
     },
     value: {
       type: String
@@ -43,26 +56,8 @@ export default {
       this.$nextTick().then(context => {
         context.core = new Core({
           editor: context.$refs.editor.$refs.content,
-          plugins: context.config.plugins || [
-            Link,
-            Hotkey,
-            Preview,
-            ...Format,
-            ImageUpload,
-            History
-          ],
-          config: context.config || {
-            toolbar: [
-              "alignment",
-              "bold",
-              "italic",
-              "underline",
-              "removeFormat",
-              "horizontalRule"
-            ],
-            buttonToolbar: ["link", "uploadImage"],
-            placeholder: "Digite aqui..."
-          },
+          plugins: context.plugins,
+          config: context.config,
           innerHTML: context.value || null
         });
       });

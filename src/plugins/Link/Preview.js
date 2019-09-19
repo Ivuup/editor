@@ -8,54 +8,6 @@ export default class Preview extends Plugin {
   currentWord;
 
   /**
-   * Verifica se o que foi colado é uma url
-   *
-   * @param {ClipboardEvent} event
-   */
-  onPaste(event) {
-    let text = event.clipboardData.getData("TEXT");
-
-    if (
-      this.core.config &&
-      this.core.config.preview &&
-      this.core.config.preview.onPaste &&
-      this.core.config.preview.onPaste instanceof Array &&
-      this.core.config.preview.onPaste.some(func =>
-        func(event, text, this.core.editor)
-      )
-    )
-      return;
-    else if (this.regex.test(text)) {
-      this.currentWord.node = undefined;
-      this.getLinkPreview(
-        this.regex.exec(text)[0],
-        this.core.selection.focusNode
-      );
-    }
-  }
-
-  /**
-   * Verifica o conteúdo sendo adicionando e se é uma url
-   *
-   * @param {InputEvent} event
-   */
-  onKeyup(event) {
-    if (event.code != "Enter" && event.code != "Space") {
-      this.currentWord = this.core._helpers.currentWord;
-      return;
-    }
-    let result = this.regex.exec(this.currentWord.word);
-    if (!result) return;
-
-    try {
-      this.getLinkPreview(result[0]);
-      this.currentWord = {};
-    } catch (e) {
-      this.currentWord = {};
-    }
-  }
-
-  /**
    * Gera o elemento de preview
    *
    * @param {String} url
