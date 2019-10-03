@@ -1,14 +1,17 @@
 <template>
   <v-menu attach bottom offset-y :class="{ add: true, active: show }">
-    <v-btn
-      slot="activator"
-      small
-      class="mx-0 mb-0"
-      icon
-      :style="`margin-top: ${offsetTop}px;`"
-    >
-      <v-icon>add_circle_outline</v-icon>
-    </v-btn>
+    <template #activator="{ on }">
+      <v-btn
+        slot="activator"
+        small
+        class="mx-0 mb-0"
+        icon
+        :style="`margin-top: ${offsetTop}px;`"
+        v-on="on"
+      >
+        <v-icon>add_circle_outline</v-icon>
+      </v-btn>
+    </template>
     <v-card class="pa-1">
       <btn
         v-for="button in buttons"

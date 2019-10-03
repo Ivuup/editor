@@ -1,8 +1,10 @@
 <template>
   <v-menu attach bottom offset-y v-if="typeof item.command == 'object'">
-    <v-btn icon small class="mx-0" slot="activator" :title="item.title">
-      <v-icon small>format_align_justify</v-icon>
-    </v-btn>
+    <template #activator="{ on }">
+      <v-btn icon small class="mx-0" :title="item.title" v-on="on">
+        <v-icon small>format_align_justify</v-icon>
+      </v-btn>
+    </template>
     <v-card>
       <recursive-button
         v-for="button in item.command"

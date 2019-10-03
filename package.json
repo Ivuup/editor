@@ -1,6 +1,6 @@
 {
   "name": "@ivuup/editor",
-  "version": "1.3.21",
+  "version": "1.3.24",
   "description": "Editor's Ivuup",
   "main": "index.js",
   "scripts": {
@@ -30,8 +30,7 @@
     "tributejs": "^3.7.1",
     "vue": "^2.6.10",
     "vue-router": "^3.0.3",
-    "vue-tribute": "^1.0.2",
-    "vuetify": "^1.5.11"
+    "vue-tribute": "^1.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.8.0",
@@ -48,7 +47,8 @@
     "lint-staged": "^8.1.5",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.1.0",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "vuetify": "^2.0.19"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"

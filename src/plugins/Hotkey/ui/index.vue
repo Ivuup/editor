@@ -1,12 +1,12 @@
 <template>
   <v-list v-if="core.plugins.hotkey.currentList.length > 0">
-    <v-list-tile
+    <v-list-item
       v-for="item in core.plugins.hotkey.currentList"
       :key="item.raw"
       @click="core.exec('hotkey.selectedItem', item)"
     >
-      <v-list-tile-content>{{ item.name }}</v-list-tile-content>
-    </v-list-tile>
+      <v-list-item-content>{{ item.name }}</v-list-item-content>
+    </v-list-item>
   </v-list>
 </template>
 

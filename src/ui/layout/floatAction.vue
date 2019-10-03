@@ -1,5 +1,5 @@
 <template>
-  <v-menu ref="floatAction" attach="body" :value="core._floatAction.value">
+  <v-menu ref="floatAction" :value="core._floatAction.value">
     <div
       v-if="core._floatAction.component"
       :is="core._floatAction.component"
