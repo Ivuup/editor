@@ -7,6 +7,7 @@
         class="mx-0 mb-0"
         icon
         :style="`margin-top: ${offsetTop}px;`"
+        v-show="show"
         v-on="on"
       >
         <v-icon>add_circle_outline</v-icon>
