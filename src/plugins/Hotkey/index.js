@@ -129,7 +129,7 @@ export default class Hotkey extends Plugin {
   }
 
   /**
-   * Executado quando um item da lista eh selecionado
+   * Executado quando um item da lista é selecionado
    *
    * @param {Element} editor
    * @param {Object} item
@@ -138,16 +138,25 @@ export default class Hotkey extends Plugin {
     // caso item nao tenha click
     if (!item.render) return;
 
-    // adicionando o texto antes da hotkey
-    if (this.currentIndex.start > 0) {
-      let start = document.createTextNode(
-        this.core.selection.focusNode.data.slice(0, this.currentIndex.start)
-      );
-      this.core.selection.focusNode.parentNode.insertBefore(
-        start,
-        this.core.selection.focusNode
+    // separando e pegando nó do comando
+    this.currentIndex.node = this.core.selection.focusNode;
+    if (
+      this.currentIndex.node instanceof Element &&
+      this.currentIndex.node.innerText.trim() == ""
+    ) {
+      this.currentIndex.node = document.createTextNode("");
+      this.core.selection.focusNode.prepend(this.currentIndex.node);
+    } else {
+      this.currentIndex.node.splitText(this.currentIndex.end);
+      this.currentIndex.node = this.currentIndex.node.splitText(
+        this.currentIndex.start
       );
     }
+
+    // setando o cursor no final do comando
+    window
+      .getSelection()
+      .setPosition(this.currentIndex.node, this.currentIndex.node.data.length);
 
     // adicionando elemento da hotkey
     let createElement = (nodeName = "span", customElement) => {
@@ -161,19 +170,12 @@ export default class Hotkey extends Plugin {
       }
 
       // adiciona o elemento ao editor
-      if (
-        (customElement && customElement.nodeName == "SPAN") ||
-        element.nodeName == "SPAN"
-      )
-        this.core.selection.focusNode.parentNode.insertBefore(
-          customElement || element,
-          this.core.selection.focusNode
-        );
-      else
-        this.core.selection.focusNode.parentNode.insertAdjacentElement(
-          "afterend",
-          customElement || element
-        );
+      this.currentIndex.node.parentElement.insertBefore(
+        customElement || element,
+        this.currentIndex.node
+      );
+
+      this.currentIndex.node.remove();
 
       // retorna o elemento alvo
       return (
@@ -187,8 +189,13 @@ export default class Hotkey extends Plugin {
         this.currentIndex.end + 1
       );
 
+    let parent = this.currentIndex.node.parentElement;
+
     // executando acao da hotkey
-    item.render(this.core, createElement);
+    item.render(this.core, createElement, this.currentIndex.node);
+
+    // normalizando os nós
+    parent.normalize();
 
     setTimeout(() => {
       this.core.editor.dispatchEvent(new Event("input"));
