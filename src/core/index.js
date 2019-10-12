@@ -72,8 +72,6 @@ export default class {
     this._checkDeleteEvents(event);
     this._helpers.currentWord = currentWord();
 
-    this.selection = null;
-    this.selection = window.getSelection();
     Object.keys(this.plugins).forEach(plugin =>
       this.plugins[plugin].onKeydown
         ? this.plugins[plugin].onKeydown(event)

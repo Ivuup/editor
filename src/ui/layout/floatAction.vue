@@ -1,5 +1,10 @@
 <template>
-  <v-menu ref="floatAction" :value="core._floatAction.value">
+  <v-menu
+    ref="floatAction"
+    :value="core._floatAction.value"
+    attach
+    @input="$refs.floatAction.isActive = core._floatAction.value"
+  >
     <div
       v-if="core._floatAction.component"
       :is="core._floatAction.component"
@@ -32,7 +37,7 @@ export default {
       this.calcDimensions();
     },
     "core._floatAction.value"(v) {
-      this.$refs.floatAction.active = v;
+      this.$refs.floatAction.isActive = v;
       if (!v) return;
       this.calcDimensions();
     }

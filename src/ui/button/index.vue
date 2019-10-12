@@ -2,7 +2,7 @@
   <v-menu attach bottom offset-y v-if="typeof item.command == 'object'">
     <template #activator="{ on }">
       <v-btn icon small class="mx-0" :title="item.title" v-on="on">
-        <v-icon small>format_align_justify</v-icon>
+        <v-icon v-bind="iconProps">{{ item.icon }}</v-icon>
       </v-btn>
     </template>
     <v-card>
@@ -23,7 +23,7 @@
     :title="item.title"
     :color="item.active ? 'grey lighten-2' : null"
   >
-    <v-icon small>{{ item.icon }}</v-icon>
+    <v-icon v-bind="iconProps">{{ item.icon }}</v-icon>
   </v-btn>
 </template>
 
@@ -36,6 +36,12 @@ export default {
     item: {
       type: Button,
       required: true
+    },
+    iconProps: {
+      type: Object,
+      default: () => ({
+        small: true
+      })
     }
   }
 };

@@ -1,5 +1,11 @@
 <template>
-  <v-menu attach bottom offset-y :class="{ add: true, active: show }">
+  <v-menu
+    attach
+    bottom
+    offset-y
+    :class="{ add: true, active: show }"
+    v-if="buttonOrButtons.length > 0"
+  >
     <template #activator="{ on }">
       <v-btn
         slot="activator"
@@ -15,13 +21,20 @@
     </template>
     <v-card class="pa-1">
       <btn
-        v-for="button in buttons"
+        v-for="button in buttonOrButtons"
         :key="button.name"
         :item="button"
         @command="$emit('command', $event)"
       ></btn>
     </v-card>
   </v-menu>
+  <btn
+    v-else
+    @command="$emit('command', $event)"
+    :style="`margin-top: ${offsetTop}px; opacity: ${show ? 1 : 0}`"
+    :item="buttonOrButtons"
+    :iconProps="{}"
+  />
 </template>
 
 <script>
@@ -33,10 +46,13 @@ export default {
     Btn
   },
   computed: {
-    buttons() {
-      return this.core.config.buttonToolbar
-        .slice()
-        .map(i => (i instanceof Button ? i : this.core.enabledButtons[i]));
+    buttonOrButtons() {
+      if (this.core.config.buttonToolbar instanceof Button)
+        return this.core.config.buttonToolbar;
+
+      return this.core.config.buttonToolbar.map(i =>
+        i instanceof Button ? i : this.core.enabledButtons[i]
+      );
     }
   },
   data() {
@@ -60,7 +76,7 @@ export default {
           v.focusNode.offsetTop -
           v.focusNode.clientHeight / 3 -
           v.focusNode.parentNode.scrollTop;
-      if (this.offsetTop < 40) this.offsetTop = 40;
+      if (this.offsetTop < 22) this.offsetTop = 22;
     }
   }
 };
