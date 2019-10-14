@@ -69,7 +69,6 @@ export default class {
   }
 
   _handleKeydown(event) {
-    this._checkDeleteEvents(event);
     this._helpers.currentWord = currentWord();
 
     Object.keys(this.plugins).forEach(plugin =>

@@ -35,9 +35,6 @@ export default class Hotkey extends Plugin {
     // varrer o conteúdo e renderizar os componentes
     this.loadComponents();
   }
-  onKeydown(event) {
-    this._checkActions(event);
-  }
 
   onKeyup(event) {
     this.core._floatAction.value = false;
@@ -111,21 +108,6 @@ export default class Hotkey extends Plugin {
 
   _getMarker(word) {
     return this.core.config.hotkey.find(m => m.marker == word.slice(0, 1));
-  }
-
-  _checkActions(event) {
-    // verificando se menu esta ativo
-    if (!this.core._floatAction.value) return;
-
-    switch (event.key) {
-      case "Escape":
-        event.preventDefault();
-        this.core._floatAction.value = false;
-        break;
-      default:
-        this.core._floatAction.menu.changeListIndex(event);
-        break;
-    }
   }
 
   /**

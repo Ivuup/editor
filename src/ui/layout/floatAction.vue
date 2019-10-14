@@ -9,6 +9,8 @@
       v-if="core._floatAction.component"
       :is="core._floatAction.component"
       :core="core"
+      @DOMSubtreeModified.native="calcDimensions()"
+      style="max-height:100vh;"
     ></div>
   </v-menu>
 </template>
@@ -30,6 +32,34 @@ export default {
   mounted() {
     this.core._floatAction.menu = this.$refs.floatAction;
     this.$refs.floatAction.$refs.content.style.position = "fixed";
+
+    // teclas de navegação em listagem
+    this._actionsEvent = this.core.editor.addEventListener("keydown", event => {
+      // verificando se menu esta ativo
+      if (!this.$refs.floatAction.isActive) return;
+
+      switch (event.key) {
+        case "Escape":
+          event.preventDefault();
+          this.$refs.floatAction.isActive = false;
+          break;
+        default:
+          this.$refs.floatAction.changeListIndex(event);
+          break;
+      }
+
+      let tmp = {
+        node: window.getSelection().focusNode,
+        offset: window.getSelection().focusOffset
+      };
+      if (this.$refs.floatAction.activeTile)
+        this.$refs.floatAction.activeTile.focus();
+      window.getSelection().removeAllRanges();
+      window.getSelection().setPosition(tmp.node, tmp.offset);
+    });
+  },
+  beforeDestroy() {
+    this.core.editor.removeEventListener("keydown", this._actionsEvent);
   },
   watch: {
     "core.selection"(v) {
@@ -39,7 +69,9 @@ export default {
     "core._floatAction.value"(v) {
       this.$refs.floatAction.isActive = v;
       if (!v) return;
-      this.calcDimensions();
+      setTimeout(() => {
+        this.calcDimensions();
+      }, 100);
     }
   },
   methods: {
@@ -64,13 +96,16 @@ export default {
 
       let x = this.core.selection.getRangeAt(0).getBoundingClientRect().x;
       x = x > maxX ? maxX : x;
+      this.y = this.y < 0 ? 0 : this.y;
 
       if (x < 0) return;
 
       this.x = x;
-
-      this.$refs.floatAction.$refs.content.style.top = `${this.y}px`;
-      this.$refs.floatAction.$refs.content.style.left = `${this.x}px`;
+      this.$refs.floatAction.$refs.content.style.transform = `translate(${
+        this.x
+      }px, ${this.y}px)`;
+      this.$refs.floatAction.$refs.content.style.maxWidth =
+        this.core.editor.getBoundingClientRect().width + "px";
     }
   }
 };

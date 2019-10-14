@@ -99,8 +99,10 @@
 .i-editor .i-content p {
   min-height: 16px;
 }
-.i-float-action {
-  transition: position 500ms;
+
+/* Float Action */
+.i-float-action > div {
+  transition: transform ease 400ms;
 }
 
 .i-content img {
